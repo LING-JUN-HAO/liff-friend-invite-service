@@ -34,7 +34,7 @@ const handleShareMessage = async () => {
           contents: [
             {
               type: 'image',
-              url: 'https://res.cloudinary.com/dj4rwmdiu/image/upload/v1779513494/%E8%AD%B7%E7%89%99-01_path7w.png',
+              url: 'https://res.cloudinary.com/dseg0uwc9/image/upload/v1780279859/%E8%B1%AA%E5%B6%BC%20linebot%20%E5%B7%A5%E4%BD%9C/%E8%AD%B7%E7%89%99-01_bfm6nj.png',
               size: 'full',
               aspectRatio: '1040:768',
               action: {
