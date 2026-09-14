@@ -1,70 +1,39 @@
 <script setup lang="ts">
-import { onMounted } from "vue";
-import liff from "@line/liff";
+import { onMounted } from 'vue';
+import liff from '@line/liff';
+import Game from './views/Game.vue';
+import Share from './views/Share.vue';
+import { autoSend, type ShareKey, SHARES } from './utils/share';
 
-const officialAccountUrl = 'https://line.me/R/ti/p/%40723znbzn';
-
-const handleUserLogin = () => {
-  if (!liff.isLoggedIn()) {
-    liff.login()
-    return false;
-  }
-
-  return true;
-}
-
-const handleShareMessage = async () => {
-  if (!liff.isApiAvailable('shareTargetPicker')) {
-    window.alert('此裝置不支援分享功能，將關閉 LIFF 視窗。');
-    liff.closeWindow();
-    return;
-  }
-
-  await liff.shareTargetPicker([
-    {
-      type: 'flex',
-      altText: '溫醫師的端午護牙大挑戰',
-      contents: {
-        type: 'bubble',
-        size: "giga",
-        body: {
-          type: 'box',
-          layout: 'vertical',
-          paddingAll: 'none',
-          contents: [
-            {
-              type: 'image',
-              url: 'https://res.cloudinary.com/dseg0uwc9/image/upload/v1780279859/%E8%B1%AA%E5%B6%BC%20linebot%20%E5%B7%A5%E4%BD%9C/%E8%AD%B7%E7%89%99-01_bfm6nj.png',
-              size: 'full',
-              aspectRatio: '1040:768',
-              action: {
-                type: 'uri',
-                label: '溫醫師的端午護牙大挑戰',
-                uri: officialAccountUrl
-              }
-            }
-          ]
-        }
-      }
-    }
-  ]);
-  liff.closeWindow();
-}
+/**
+ * 同一個 LIFF（一組 VITE_LIFF_ID），靠網址切換頁面。
+ *
+ * 部署經過 Cloudflare Worker（只轉發 /liff*）→ Render，
+ * 所以實際到達的路徑會帶 /liff 前綴（例如 /liff、/liff/moongame）。
+ * 因此這裡用「路徑含 moongame」判斷，有沒有前綴都成立。
+ *
+ * LIFF Endpoint 設成：https://haoyu-linebot-liff.qd513020.workers.dev/liff
+ *   ‧ 分享頁（預設）  https://liff.line.me/<LIFF_ID>              → /liff
+ *   ‧ 尋兔遊戲        https://liff.line.me/<LIFF_ID>/moongame    → /liff/moongame
+ *   ‧ 或用 query      https://liff.line.me/<LIFF_ID>?p=moongame  → /liff?p=moongame
+ *   ‧ 自動分享        https://liff.line.me/<LIFF_ID>?action=share&key=<key>
+ */
+const params = new URLSearchParams(window.location.search);
+const path = window.location.pathname;
+const mode = params.get('p');
+const isGame = path.includes('moongame') || mode === 'moongame';
 
 onMounted(async () => {
-  try {
-    await liff.init({
-      liffId: import.meta.env.VITE_LIFF_ID,
-    });
-    if (!handleUserLogin()) {
-      return;
-    }
-
-    await handleShareMessage();
-  } catch (error) {
-    console.error('LIFF 初始化失敗', error);
+  const action = params.get('action');
+  const key = params.get('key') as ShareKey;
+  if (action === 'share' && key && key in SHARES) {
+    await liff.init({ liffId: import.meta.env.VITE_LIFF_ID });
+    await autoSend(key);
   }
 });
 </script>
 
-<template></template>
+<template>
+  <Game v-if="isGame" />
+  <Share v-else />
+</template>
