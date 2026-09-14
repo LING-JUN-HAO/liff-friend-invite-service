@@ -80,12 +80,6 @@ export const SHARES = {
   ],
 } as const;
 
-/** Share.vue 上要顯示哪些分享按鈕（順序即顯示順序） */
-export const SHARE_BUTTONS: { label: string; key: keyof typeof SHARES }[] = [
-  { label: '分享尋兔遊戲', key: 'moongame' },
-  { label: '分享温醫師小測驗', key: 'moonquiz' },
-  { label: '分享端午護牙大挑戰', key: 'duanwu' },
-];
 
 export type ShareKey = keyof typeof SHARES;
 
