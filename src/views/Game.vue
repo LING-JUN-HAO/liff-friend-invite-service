@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue';
-import liff from '@line/liff';
 import { share } from '../utils/share';
 
 /**
@@ -103,16 +102,8 @@ const submit = () => {
 
 const download = () => window.alert('長按賀卡即可儲存');
 
-onMounted(async () => {
-  try {
-    await liff.init({
-      liffId: import.meta.env.VITE_LIFF_ID,
-    });
-  } catch (error) {
-    console.error('LIFF 初始化失敗', error);
-  } finally {
-    screen.value = 'game';
-  }
+onMounted(() => {
+  screen.value = 'game';
 });
 </script>
 
