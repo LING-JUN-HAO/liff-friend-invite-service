@@ -17,12 +17,17 @@ type View = 'game' | 'none';
 const view = ref<View>('none');
 
 onMounted(async () => {
+  // init 前先解析 liff.state（LINE 將原始 query params 編碼在此）
+  const preParams = new URLSearchParams(window.location.search);
+  const liffState = decodeURIComponent(preParams.get('liff.state') ?? '');
+
   await liff.init({ liffId: import.meta.env.VITE_LIFF_ID });
 
-  const params = new URLSearchParams(window.location.search);
-  const action = params.get('action');
-  const key = params.get('key') as ShareKey;
-  const p = params.get('p');
+  // init 後 LINE 會把 liff.state 還原成原始 query params
+  const postParams = new URLSearchParams(window.location.search);
+  const action = postParams.get('action') || (liffState.includes('action=share') ? 'share' : null);
+  const key = (postParams.get('key') || new URLSearchParams(liffState.replace(/^\?/, '')).get('key')) as ShareKey;
+  const p = postParams.get('p') || new URLSearchParams(liffState.replace(/^\?/, '')).get('p');
 
   if (action === 'share' && key && key in SHARES) {
     await autoSend(key);
