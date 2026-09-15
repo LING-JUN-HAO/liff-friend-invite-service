@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, onMounted, reactive, ref } from 'vue';
-import { share } from '../utils/share';
 
 /**
  * 中秋尋兔賀卡 — LIFF 遊戲（螢幕②～⑥）
@@ -145,7 +144,7 @@ onMounted(() => {
         <button class="btn green" @click="submit">送出答案</button>
       </template>
       <template v-else-if="screen === 'win'">
-        <button class="btn green-o" @click="share('moongame')">分享給好友玩</button>
+        <!-- <button class="btn green-o" @click="share('moongame')">分享給好友玩</button> -->
         <button class="btn gold" @click="screen = 'card'">領取專屬賀卡</button>
       </template>
       <template v-else-if="screen === 'fail'">
@@ -169,7 +168,7 @@ onMounted(() => {
         <div v-else class="placeholder cardph">中秋賀卡圖<br />待替換</div>
       </div>
       <p class="save-tip">長按圖片可直接儲存<br />將祝福轉傳給親朋好友吧！</p>
-      <button class="btn green-o" @click="share('moongame')">分享給好友玩</button>
+      <!-- <button class="btn green-o" @click="share('moongame')">分享給好友玩</button> -->
       <button class="btn gold" @click="download">賀卡下載</button>
     </main>
   </div>

@@ -81,31 +81,3 @@ export const SHARES = {
 } as const;
 
 
-export type ShareKey = keyof typeof SHARES;
-
-/** 依 key 開啟分享選單（使用者手動選擇分享對象） */
-export async function share(key: ShareKey) {
-  if (!liff.isLoggedIn()) {
-    liff.login();
-    return;
-  }
-  if (!liff.isApiAvailable('shareTargetPicker')) {
-    window.alert('此裝置不支援分享功能');
-    return;
-  }
-  await liff.shareTargetPicker(SHARES[key] as never);
-}
-
-/**
- * 依 key 自動送出訊息至當前聊天室，送完關閉視窗。
- * 適用於：imagemap linkUri 帶 ?action=share&key=<key>，LIFF 開啟後自動觸發。
- * 注意：只能在 LINE 內開啟的 LIFF 才能使用 sendMessages。
- */
-export async function autoSend(key: ShareKey) {
-  if (!liff.isLoggedIn()) {
-    liff.login();
-    return;
-  }
-  await liff.sendMessages(SHARES[key] as never);
-  liff.closeWindow();
-}
