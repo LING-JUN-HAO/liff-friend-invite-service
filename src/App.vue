@@ -20,21 +20,35 @@ const view = ref<View>('none');
 const debugInfo = ref('');
 
 onMounted(async () => {
-  // init 前先解析 liff.state（LINE 將原始 query params 編碼在此）
   const preParams = new URLSearchParams(window.location.search);
-  const liffState = decodeURIComponent(preParams.get('liff.state') ?? '');
+  const isOAuthCallback = preParams.has('code') && preParams.has('liffClientId');
 
-  debugInfo.value = `[pre] search: ${window.location.search}\n[pre] liff.state: ${liffState}`;
+  // OAuth redirect 前把 routing 資訊存起來，以免 redirect 後遺失
+  if (!isOAuthCallback) {
+    const liffState = decodeURIComponent(preParams.get('liff.state') ?? '');
+    const stateParams = new URLSearchParams(liffState.replace(/^\?/, ''));
+    const p = preParams.get('p') || stateParams.get('p');
+    const action = preParams.get('action') || stateParams.get('action');
+    const key = preParams.get('key') || stateParams.get('key');
+    if (p) localStorage.setItem('liff_p', p);
+    if (action) localStorage.setItem('liff_action', action);
+    if (key) localStorage.setItem('liff_key', key);
+  }
 
   await liff.init({ liffId: import.meta.env.VITE_LIFF_ID });
 
-  // init 後 LINE 會把 liff.state 還原成原始 query params
+  // init 後從 URL 或 localStorage 取得 routing 資訊
   const postParams = new URLSearchParams(window.location.search);
-  const action = postParams.get('action') || (liffState.includes('action=share') ? 'share' : null);
-  const key = (postParams.get('key') || new URLSearchParams(liffState.replace(/^\?/, '')).get('key')) as ShareKey;
-  const p = postParams.get('p') || new URLSearchParams(liffState.replace(/^\?/, '')).get('p');
+  const p = postParams.get('p') || localStorage.getItem('liff_p');
+  const action = postParams.get('action') || localStorage.getItem('liff_action');
+  const key = (postParams.get('key') || localStorage.getItem('liff_key')) as ShareKey;
 
-  debugInfo.value += `\n[post] search: ${window.location.search}\naction: ${action}, key: ${key}, p: ${p}\n→ view: ${p === 'moongame' ? 'game' : action === 'share' ? 'autoSend' : 'none'}`;
+  // 用完清掉
+  localStorage.removeItem('liff_p');
+  localStorage.removeItem('liff_action');
+  localStorage.removeItem('liff_key');
+
+  debugInfo.value = `search: ${window.location.search}\np: ${p}, action: ${action}, key: ${key}`;
 
   if (action === 'share' && key && key in SHARES) {
     await autoSend(key);
