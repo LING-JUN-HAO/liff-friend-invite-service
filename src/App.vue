@@ -16,10 +16,15 @@ import { autoSend, type ShareKey, SHARES } from './utils/share';
 type View = 'game' | 'none';
 const view = ref<View>('none');
 
+// DEBUG
+const debugInfo = ref('');
+
 onMounted(async () => {
   // init 前先解析 liff.state（LINE 將原始 query params 編碼在此）
   const preParams = new URLSearchParams(window.location.search);
   const liffState = decodeURIComponent(preParams.get('liff.state') ?? '');
+
+  debugInfo.value = `[pre] search: ${window.location.search}\n[pre] liff.state: ${liffState}`;
 
   await liff.init({ liffId: import.meta.env.VITE_LIFF_ID });
 
@@ -28,6 +33,8 @@ onMounted(async () => {
   const action = postParams.get('action') || (liffState.includes('action=share') ? 'share' : null);
   const key = (postParams.get('key') || new URLSearchParams(liffState.replace(/^\?/, '')).get('key')) as ShareKey;
   const p = postParams.get('p') || new URLSearchParams(liffState.replace(/^\?/, '')).get('p');
+
+  debugInfo.value += `\n[post] search: ${window.location.search}\naction: ${action}, key: ${key}, p: ${p}\n→ view: ${p === 'moongame' ? 'game' : action === 'share' ? 'autoSend' : 'none'}`;
 
   if (action === 'share' && key && key in SHARES) {
     await autoSend(key);
@@ -39,4 +46,6 @@ onMounted(async () => {
 
 <template>
   <Game v-if="view === 'game'" />
+  <!-- DEBUG -->
+  <pre v-else style="padding:16px;font-size:12px;word-break:break-all;white-space:pre-wrap;">{{ debugInfo }}</pre>
 </template>
