@@ -57,27 +57,17 @@ const handleShareMessage = async () => {
 
 onMounted(async () => {
   try {
-    // OAuth redirect 前把 p 存起來，避免 redirect 後遺失
-    const preParams = new URLSearchParams(window.location.search);
-    const isOAuthCallback = preParams.has('code') && preParams.has('liffClientId');
-    if (!isOAuthCallback) {
-      const liffState = decodeURIComponent(preParams.get('liff.state') ?? '');
-      const stateParams = new URLSearchParams(liffState.replace(/^\?/, ''));
-      const p = preParams.get('p') || stateParams.get('p');
-      if (p) localStorage.setItem('liff_p', p);
+       await liff.init({
+      liffId: import.meta.env.VITE_LIFF_ID,
+    });
+    if (!handleUserLogin()) {
+      return;
     }
 
-    await liff.init({ liffId: import.meta.env.VITE_LIFF_ID });
-
-    if (!handleUserLogin()) return;
-
     // init 後從 URL 或 localStorage 取得路由
-    const postParams = new URLSearchParams(window.location.search);
-    const p = postParams.get('p') || localStorage.getItem('liff_p');
-    localStorage.removeItem('liff_p');
-
-    debugInfo.value = `search: ${window.location.search}\np: ${p}`;
-
+    const urlParams = new URLSearchParams(window.location.search);
+    const p = urlParams.get('p')
+    console.log(p)
     if (p === 'moongame') {
       view.value = 'game';
     } else {
