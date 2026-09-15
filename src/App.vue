@@ -64,14 +64,28 @@ onMounted(async () => {
       return;
     }
 
-    // init 後從 URL 或 localStorage 取得路由
-    const urlParams = new URLSearchParams(window.location.search);
-    const p = urlParams.get('p')
-    console.log(p)
+    // 1. 先抓標準的網址參數
+    let urlParams = new URLSearchParams(window.location.search);
+    let p = urlParams.get('p');
+
+    // 2. 如果標準網址抓不到，嘗試去解析被 LINE 移到 liff.state 裡的參數
+    if (!p) {
+      const liffState = urlParams.get('liff.state');
+      if (liffState) {
+        // 解碼 liff.state (它通常會以 ? 或 & 開頭，例如 ?p=moongame)
+        const decodedState = decodeURIComponent(liffState);
+        const stateParams = new URLSearchParams(decodedState);
+        p = stateParams.get('p');
+      }
+    }
+
+    console.log('手動解析取得的 p:', p);
+        
     if (p === 'moongame') {
       view.value = 'game';
     } else {
-      await handleShareMessage();
+      // await handleShareMessage();
+      console.log('p',p)
     }
   } catch (error) {
     console.error('LIFF 初始化失敗', error);
