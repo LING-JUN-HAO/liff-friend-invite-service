@@ -12,12 +12,11 @@ import { autoSend, type ShareKey, SHARES } from './utils/share';
  * 因此這裡用「路徑含 moongame」判斷，有沒有前綴都成立。
  *
  * LIFF Endpoint 設成：https://haoyu-linebot-liff.qd513020.workers.dev/liff
- *   ‧ 尋兔遊戲   https://liff.line.me/<LIFF_ID>/moongame       → /liff/moongame
+ *   ‧ 尋兔遊戲   https://liff.line.me/<LIFF_ID>?p=moongame
  *   ‧ 自動分享   https://liff.line.me/<LIFF_ID>?action=share&key=<key>
  */
 const params = new URLSearchParams(window.location.search);
-const path = window.location.pathname;
-const isGame = path.includes('moongame');
+const isGame = params.get('p') === 'moongame';
 
 onMounted(async () => {
   const action = params.get('action');
