@@ -54,10 +54,7 @@ const handleUserLogin = () => {
 //   ]);
 //   liff.closeWindow();
 // }
-
 onMounted(async () => {
-    console.log('🔥 NEW LIFF VERSION 2026-09-15');
-
   try {
        await liff.init({
       liffId: import.meta.env.VITE_LIFF_ID,
@@ -69,19 +66,6 @@ onMounted(async () => {
     // 1. 先抓標準的網址參數
     let urlParams = new URLSearchParams(window.location.search);
     let p = urlParams.get('p');
-
-    // 2. 如果標準網址抓不到，嘗試去解析被 LINE 移到 liff.state 裡的參數
-    if (!p) {
-      const liffState = urlParams.get('liff.state');
-      if (liffState) {
-        // 解碼 liff.state (它通常會以 ? 或 & 開頭，例如 ?p=moongame)
-        const decodedState = decodeURIComponent(liffState);
-        const stateParams = new URLSearchParams(decodedState);
-        p = stateParams.get('p');
-      }
-    }
-
-    console.log('手動解析取得的 p:', p);
         
     if (p === 'moongame') {
       view.value = 'game';
@@ -96,6 +80,5 @@ onMounted(async () => {
 </script>
 
 <template>
-  <!-- <Game v-if="view === 'game'" /> -->
-  <!-- DEBUG -->
+  <Game v-if="view === 'game'" />
 </template>
