@@ -62,14 +62,10 @@ onMounted(async () => {
     if (!handleUserLogin()) {
       return;
     }
-    console.log('Tessssst')
-    // 1. 先抓標準的網址參數
-    let urlParams = new URLSearchParams(window.location.search);
-    let p = urlParams.get('p');
-        
-    debugInfo.value = `search: ${window.location.search} | p: ${p}`;
+    const isGame = window.location.hash === '#moongame';
+    debugInfo.value = `hash: ${window.location.hash} | isGame: ${isGame}`;
 
-    if (p === 'moongame') {
+    if (isGame) {
       view.value = 'game';
     } else {
       // await handleShareMessage();

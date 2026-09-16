@@ -7,7 +7,7 @@ import liff from '@line/liff';
  */
 const officialAccountUrl = 'https://line.me/R/ti/p/%40723znbzn';
 const LIFF_ID = import.meta.env.VITE_LIFF_ID as string;
-const gameUrl = `https://liff.line.me/${LIFF_ID}?p=moongame`;
+const gameUrl = `https://liff.line.me/${LIFF_ID}#moongame`;
 
 export const SHARES = {
   // 「分享給好友玩」：立刻開始尋寶的邀請卡（連到 /moongame）
