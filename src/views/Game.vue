@@ -108,12 +108,6 @@ onMounted(() => {
 
 <template>
   <div class="app">
-    <header class="topbar">
-      <div class="acc"><b>温世政 Wen shih-cheng</b><small>ec.twmountain.com</small></div>
-      <span class="ic">⋮ ✕</span>
-    </header>
-    <div class="green-line"></div>
-
     <!-- ②③④⑤ 遊戲 / 結算 / 揭曉 -->
     <main class="stage" v-if="screen !== 'card'">
       <div class="banner">
