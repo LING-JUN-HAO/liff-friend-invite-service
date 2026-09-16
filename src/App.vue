@@ -67,11 +67,12 @@ onMounted(async () => {
     let urlParams = new URLSearchParams(window.location.search);
     let p = urlParams.get('p');
         
+    debugInfo.value = `search: ${window.location.search} | p: ${p}`;
+
     if (p === 'moongame') {
       view.value = 'game';
     } else {
       // await handleShareMessage();
-      console.log('p',p)
     }
   } catch (error) {
     console.error('LIFF 初始化失敗', error);
@@ -81,4 +82,5 @@ onMounted(async () => {
 
 <template>
   <Game v-if="view === 'game'" />
+  <pre v-else style="padding:16px;font-size:12px;word-break:break-all;white-space:pre-wrap;">{{ debugInfo }}</pre>
 </template>
