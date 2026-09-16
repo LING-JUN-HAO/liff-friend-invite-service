@@ -57,7 +57,7 @@ const evaluate = (): Result => {
 
 const onBoardClick = (e: MouseEvent) => {
   if (screen.value !== 'game' || !board.value) return;
-  if (markers.length >= TARGETS.length) return;
+  if (markers.length >= TARGETS.length) markers.shift();
   const r = board.value.getBoundingClientRect();
   const x = ((e.clientX - r.left) / r.width) * 100;
   const y = ((e.clientY - r.top) / r.height) * 100;
