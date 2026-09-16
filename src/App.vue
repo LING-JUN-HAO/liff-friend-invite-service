@@ -75,6 +75,7 @@ onMounted(async () => {
       // await handleShareMessage();
     }
   } catch (error) {
+    debugInfo.value = `ERROR: ${String(error)}`;
     console.error('LIFF 初始化失敗', error);
   }
 });
