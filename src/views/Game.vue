@@ -93,7 +93,21 @@ const submit = () => {
   screen.value = r.hits === TARGETS.length && r.wrong === 0 ? 'win' : 'fail';
 };
 
-const download = () => window.alert('長按賀卡即可儲存');
+const download = async () => {
+  const isIOS = /iP(hone|ad|od)/.test(navigator.userAgent);
+  if (isIOS) {
+    window.open(CARD_IMG, '_blank');
+    return;
+  }
+  const res = await fetch(CARD_IMG);
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = '中秋賀卡.png';
+  a.click();
+  URL.revokeObjectURL(url);
+};
 
 onMounted(() => {
   screen.value = 'game';

@@ -6,24 +6,85 @@ import liff from '@line/liff';
  * 用法：import { share } from '../utils/share'; 然後 share('moongame')
  */
 const officialAccountUrl = 'https://line.me/R/ti/p/%40723znbzn';
-const LIFF_ID = import.meta.env.VITE_LIFF_ID as string;
-const gameUrl = `https://liff.line.me/${LIFF_ID}#moongame`;
 
 export const SHARES = {
   // 「分享給好友玩」：立刻開始尋寶的邀請卡（連到 /moongame）
   moongame: [
     {
       type: 'flex',
-      altText: '南投尋兔趣｜找出隱藏玉兔',
+      altText: '中秋尋物賀卡｜找出藏起來的中秋小物',
       contents: {
         type: 'bubble',
         size: 'giga',
         body: {
-          type: 'box', layout: 'vertical', paddingAll: '16px', spacing: 'md',
+          type: 'box',
+          layout: 'vertical',
+          paddingAll: 'none',
           contents: [
-            { type: 'text', text: '🐰 南投尋兔趣', weight: 'bold', size: 'xl' },
-            { type: 'text', text: '熱鬧的南投廟埕前藏了 3 隻調皮玉兔，快來找找看，領取限量中秋賀卡！', wrap: true, size: 'sm', color: '#666666' },
-            { type: 'button', style: 'primary', color: '#06C755', action: { type: 'uri', label: '立刻開始尋寶', uri: gameUrl } },
+            {
+              type: 'image',
+              url: 'https://res.cloudinary.com/dj4rwmdiu/image/upload/v1789306852/img01_cover_slewoq.png',
+              size: 'full',
+              aspectMode: 'cover',
+              aspectRatio: '1644:734',
+            },
+            {
+              type: 'box',
+              layout: 'vertical',
+              paddingTop: '12px',
+              paddingStart: '16px',
+              paddingEnd: '16px',
+              paddingBottom: '12px',
+              spacing: 'md',
+              contents: [
+                {
+                  type: 'text',
+                  text: '【南投尋兔趣】找出隱藏玉兔！',
+                  weight: 'bold',
+                  size: '20px',
+                  wrap: true,
+                },
+                {
+                  type: 'text',
+                  text: '熱鬧的南投廟埕藏了 3 隻調皮玉兔 🐰',
+                  wrap: true,
+                  size: '17px',
+                  color: '#333333',
+                },
+                {
+                  type: 'text',
+                  text: '點擊畫面把它們全部找出來，即可領取限量中秋賀卡！',
+                  wrap: true,
+                  size: '17px',
+                  color: '#333333',
+                },
+                {
+                  type: 'box',
+                  layout: 'vertical',
+                  height: '48px',
+                  backgroundColor: '#00C853',
+                  cornerRadius: '999px',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  margin: 'sm',
+                  action: {
+                    type: 'uri',
+                    label: '立刻開始尋寶',
+                    uri: officialAccountUrl,
+                  },
+                  contents: [
+                    {
+                      type: 'text',
+                      text: '立刻開始尋寶',
+                      color: '#FFFFFF',
+                      weight: 'bold',
+                      size: '18px',
+                      align: 'center',
+                    },
+                  ],
+                },
+              ],
+            },
           ],
         },
       },
