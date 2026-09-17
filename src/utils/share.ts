@@ -11,7 +11,6 @@ const gameUrl = `https://liff.line.me/${LIFF_ID}#moongame`;
 
 export const SHARES = {
   // 「分享給好友玩」：立刻開始尋寶的邀請卡（連到 /moongame）
-  // TODO 有入口圖後，在 contents 最前面加一個 { type:'image', url:'<Cloudinary>', size:'full', aspectRatio:'1:1' }
   moongame: [
     {
       type: 'flex',
@@ -80,4 +79,8 @@ export const SHARES = {
   ],
 } as const;
 
-
+export const share = async (key: keyof typeof SHARES) => {
+  const messages = SHARES[key];
+  const result = await liff.shareTargetPicker(messages as any);
+  return result;
+};
