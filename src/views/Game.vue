@@ -139,22 +139,24 @@ onMounted(() => {
       <p class="subtitle strong" v-else-if="screen === 'reveal'">感謝參與！一樣能領取祝福賀卡唷</p>
 
       <!-- 按鈕組 -->
-      <template v-if="screen === 'game'">
-        <button class="btn gray-o" @click="restart">重新圈選</button>
-        <button class="btn green" @click="submit">送出答案</button>
-      </template>
-      <template v-else-if="screen === 'win'">
-        <button class="btn green-o" @click="share('moongame')">分享給好友玩</button>
-        <button class="btn gold" @click="screen = 'card'">領取專屬賀卡</button>
-      </template>
-      <template v-else-if="screen === 'fail'">
-        <button class="btn gray-o" @click="restart">再挑戰一次</button>
-        <button class="btn gray" @click="screen = 'reveal'">查看解答</button>
-      </template>
-      <template v-else-if="screen === 'reveal'">
-        <button class="btn gray-o" @click="restart">再挑戰一次</button>
-        <button class="btn gold" @click="screen = 'card'">領取中秋賀卡</button>
-      </template>
+      <div class="btn-group">
+        <template v-if="screen === 'game'">
+          <button class="btn gray-o" @click="restart">重新圈選</button>
+          <button class="btn green" @click="submit">送出答案</button>
+        </template>
+        <template v-else-if="screen === 'win'">
+          <button class="btn green-o" @click="share('moongame')">分享給好友玩</button>
+          <button class="btn gold" @click="screen = 'card'">領取專屬賀卡</button>
+        </template>
+        <template v-else-if="screen === 'fail'">
+          <button class="btn gray-o" @click="restart">再挑戰一次</button>
+          <button class="btn gray" @click="screen = 'reveal'">查看解答</button>
+        </template>
+        <template v-else-if="screen === 'reveal'">
+          <button class="btn gray-o" @click="restart">再挑戰一次</button>
+          <button class="btn gold" @click="screen = 'card'">領取中秋賀卡</button>
+        </template>
+      </div>
     </main>
 
     <!-- ⑥ 賀卡 -->
@@ -177,8 +179,9 @@ onMounted(() => {
 * { box-sizing: border-box; }
 body { margin: 0; }
 .app { min-height: 100vh; background: #fff; color: #2b2b2b;
-  font-family: 'Noto Sans TC', system-ui, sans-serif; padding-bottom: 24px; }
-.stage { padding: 14px 18px 0; }
+  font-family: 'Noto Sans TC', system-ui, sans-serif; }
+.stage { display: flex; flex-direction: column; min-height: 100vh; padding: 14px 18px 24px; }
+.btn-group { margin-top: auto; padding-top: 12px; }
 .banner { display: flex; align-items: center; gap: 12px; background: #22b357; color: #fff; border-radius: 14px; padding: 12px 16px; font-weight: 700; font-size: 16px; }
 .banner .ava { width: 40px; height: 40px; border-radius: 50%; background: #fff; flex: 0 0 40px; background-size: cover; background-position: center; }
 .hint { text-align: center; font-weight: 700; margin: 14px 0 4px; }
