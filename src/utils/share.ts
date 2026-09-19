@@ -145,3 +145,11 @@ export const share = async (key: keyof typeof SHARES) => {
   const result = await liff.shareTargetPicker(messages as any);
   return result;
 };
+
+export const sendToChat = () => liff.sendMessages([
+  {
+    type: 'text',
+    text: `🌕温世政祝大家中秋佳節愉快！\n\n月圓人團圓，祝福南投鄉親闔家平安、事事順心！\n\n世政準備了趣味尋寶小遊戲，邀大家一起找玉兔、領取專屬中秋賀卡🥮`,
+  },
+  { ...SHARES.moongame[0] } as any,
+]);

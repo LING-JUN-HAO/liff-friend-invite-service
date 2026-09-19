@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue';
-import { share } from '../utils/share';
+import { computed, reactive, ref } from 'vue';
+import { share, sendToChat } from '../utils/share';
 
 /**
  * 中秋尋兔賀卡 — LIFF 遊戲（螢幕②～⑥）
@@ -11,25 +11,24 @@ const BG_IMG = 'https://res.cloudinary.com/dj4rwmdiu/image/upload/v1789306852/im
 const CARD_IMG = 'https://res.cloudinary.com/dj4rwmdiu/image/upload/v1789306851/img04_%E8%B3%80%E5%8D%A1_o2ijsn.png';   // 中秋賀卡圖
 const RABBIT_IMG = 'https://res.cloudinary.com/dj4rwmdiu/image/upload/v1789306854/img03_rabbit_ixxu9s.png'; // 玉兔頭像（綠色 banner 左側）
 
-type Pt = { x: number; y: number };
-const TARGETS: Pt[] = [
+type Coord = { x: number; y: number };
+const TARGETS: Coord[] = [
   { x: 90.5, y: 10.9}, // 廟頂雲上
   { x: 68.0, y: 63.9 }, // 蒸籠裡
   { x: 63.8, y: 85.1 }, // 水果籃裡
 ];
 const R = 14; // 命中半徑（% of board）
 
-type Screen = 'loading' | 'game' | 'win' | 'fail' | 'reveal' | 'card';
-const screen = ref<Screen>('loading');
+type Screen = 'game' | 'win' | 'fail' | 'reveal' | 'card';
+const screen = ref<Screen>('game');
 
-type Marker = { x: number; y: number };
-const markers = reactive<Marker[]>([]);
+const markers = reactive<Coord[]>([]);
 const board = ref<HTMLElement | null>(null);
 
-const dist = (a: Pt, b: Pt) => Math.hypot(a.x - b.x, a.y - b.y);
+const dist = (a: Coord, b: Coord) => Math.hypot(a.x - b.x, a.y - b.y);
 
 // 判定結果
-type Result = { hits: number; wrong: number; foundTarget: boolean[]; markCls: string[] };
+type Result = { hits: number; foundTarget: boolean[]; markCls: string[] };
 const evaluate = (): Result => {
   const foundTarget = new Array(TARGETS.length).fill(false);
   const markCls: string[] = [];
@@ -46,8 +45,7 @@ const evaluate = (): Result => {
     }
   });
   const hits = foundTarget.filter(Boolean).length;
-  const wrong = markCls.filter((c) => c === 'wrong').length;
-  return { hits, wrong, foundTarget, markCls };
+  return { hits, foundTarget, markCls };
 };
 
 const onBoardClick = (e: MouseEvent) => {
@@ -60,37 +58,41 @@ const onBoardClick = (e: MouseEvent) => {
 };
 
 // 各畫面要顯示的標記（遊戲：白色虛線圈；結算：綠/紅/虛線）
-type Shown = { x: number; y: number; cls: string };
+type Shown = Coord & { cls: string };
 const shownMarks = computed<Shown[]>(() => {
   if (screen.value === 'game') {
-    return markers.map((m) => ({ x: m.x, y: m.y, cls: 'tap' }));
+    return markers.map((m) => ({ ...m, cls: 'tap' }));
   }
   if (screen.value === 'win' || screen.value === 'fail') {
     const r = evaluate();
-    return markers.map((m, i) => ({ x: m.x, y: m.y, cls: r.markCls[i] }));
+    return markers.map((m, i) => ({ ...m, cls: r.markCls[i] }));
   }
   if (screen.value === 'reveal') {
     const r = evaluate();
     const out: Shown[] = TARGETS.map((t, i) => ({
-      x: t.x,
-      y: t.y,
+      ...t,
       cls: r.foundTarget[i] ? 'correct' : 'missed',
     }));
     markers.forEach((m, i) => {
-      if (r.markCls[i] === 'wrong') out.push({ x: m.x, y: m.y, cls: 'wrong' });
+      if (r.markCls[i] === 'wrong') out.push({ ...m, cls: 'wrong' });
     });
     return out;
   }
   return [];
 });
 
+const goToCard = () => {
+  sendToChat();
+  screen.value = 'card';
+};
+
 const restart = () => {
-  markers.splice(0, markers.length);
+  markers.splice(0);
   screen.value = 'game';
 };
 const submit = () => {
   const r = evaluate();
-  screen.value = r.hits === TARGETS.length && r.wrong === 0 ? 'win' : 'fail';
+  screen.value = r.hits === TARGETS.length ? 'win' : 'fail';
 };
 
 const download = async () => {
@@ -108,10 +110,6 @@ const download = async () => {
   a.click();
   URL.revokeObjectURL(url);
 };
-
-onMounted(() => {
-  screen.value = 'game';
-});
 </script>
 
 <template>
@@ -146,7 +144,7 @@ onMounted(() => {
         </template>
         <template v-else-if="screen === 'win'">
           <button class="btn green-o" @click="share('moongame')">分享給好友玩</button>
-          <button class="btn gold" @click="screen = 'card'">領取專屬賀卡</button>
+          <button class="btn gold" @click="goToCard">領取專屬賀卡</button>
         </template>
         <template v-else-if="screen === 'fail'">
           <button class="btn gray-o" @click="restart">再挑戰一次</button>
@@ -154,7 +152,7 @@ onMounted(() => {
         </template>
         <template v-else-if="screen === 'reveal'">
           <button class="btn gray-o" @click="restart">再挑戰一次</button>
-          <button class="btn gold" @click="screen = 'card'">領取中秋賀卡</button>
+          <button class="btn gold" @click="goToCard">領取中秋賀卡</button>
         </template>
       </div>
     </main>
