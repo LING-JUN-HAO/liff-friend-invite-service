@@ -6,8 +6,7 @@ import liff from '@line/liff';
  * 用法：import { share } from '../utils/share'; 然後 share('moongame')
  */
 const officialAccountUrl = 'https://line.me/R/ti/p/%40723znbzn';
-const LIFF_ID = import.meta.env.VITE_LIFF_ID as string;
-const gameUrl = `https://liff.line.me/${LIFF_ID}#moongame`;
+
 
 export const SHARES = {
   // 「分享給好友玩」：立刻開始尋寶的邀請卡（連到 /moongame）
@@ -148,19 +147,3 @@ export const share = async (key: keyof typeof SHARES) => {
   return result;
 };
 
-const CARD_IMG = 'https://res.cloudinary.com/dj4rwmdiu/image/upload/v1789306851/img04_%E8%B3%80%E5%8D%A1_o2ijsn.png';
-
-export const sendToChat = () => liff.sendMessages([
-  {
-    type: 'text',
-    text: `🌕感謝您一起熱情尋寶！祝您與家人：
-🥮月圓人團園，事事順心如意
-🥮闔家平安、中秋佳節愉快！
-長按下方賀卡即可直接儲存，轉傳祝福給親朋好友！`,
-  },
-  {
-    type: 'image',
-    originalContentUrl: CARD_IMG,
-    previewImageUrl: CARD_IMG,
-  },
-] as any);

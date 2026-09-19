@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue';
-import { share, sendToChat } from '../utils/share';
+import liff from '@line/liff';
+import { share } from '../utils/share';
 
 /**
  * 中秋尋兔賀卡 — LIFF 遊戲（螢幕②～⑥）
@@ -87,7 +88,21 @@ const shownMarks = computed<Shown[]>(() => {
 });
 
 const goToCard = () => {
-  sendToChat();
+  liff.sendMessages([
+    {
+      type: 'text',
+      text: `🌕 感謝您一起熱情尋寶！祝您與家人：
+      🥮 月圓人團園，事事順心如意
+      🥮 闔家平安、中秋佳節愉快！
+      
+      💡 長按下方賀卡即可直接儲存，轉傳祝福給親朋好友！`,
+    },
+    {
+      type: 'image',
+      originalContentUrl: CARD_IMG,
+      previewImageUrl: CARD_IMG,
+    },
+  ]);
   screen.value = 'card';
 };
 
