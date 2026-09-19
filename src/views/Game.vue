@@ -9,7 +9,7 @@ import { share } from '../utils/share';
  * TARGETS 為 3 隻玉兔的座標（x/y 為 board 百分比 0~100），R 為命中半徑（board 百分比）。
  */
 const BG_IMG = 'https://res.cloudinary.com/dj4rwmdiu/image/upload/v1789306852/img03_%E5%B0%8B%E6%89%BE%E7%8E%89%E5%85%94_o7km6z.png';     // 藏了玉兔的插圖（建議正方形 1:1）
-const CARD_IMG = 'https://res.cloudinary.com/dj4rwmdiu/image/upload/v1789306851/img04_%E8%B3%80%E5%8D%A1_o2ijsn.png';   // 中秋賀卡圖
+const CARD_IMG = 'https://res.cloudinary.com/dj4rwmdiu/image/upload/v1789306851/Moon%20Festival%20Greeting%20Card.png';   // 中秋賀卡圖
 const RABBIT_IMG = 'https://res.cloudinary.com/dj4rwmdiu/image/upload/v1789306854/img03_rabbit_ixxu9s.png'; // 玉兔頭像（綠色 banner 左側）
 
 type Coord = { x: number; y: number };
