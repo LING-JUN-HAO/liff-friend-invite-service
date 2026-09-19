@@ -2,6 +2,7 @@
 import { onMounted, ref } from "vue";
 import liff from "@line/liff";
 import Game from './views/Game.vue';
+import { share } from './utils/share';
 
 const LIFF_ID = import.meta.env.VITE_LIFF_ID as string;
 const gameUrl = `https://liff.line.me/${LIFF_ID}#moongame`;
@@ -30,9 +31,19 @@ onMounted(async () => {
       return;
     }
     if (!handleUserLogin()) return;
-    const isGame = window.location.hash === '#moongame';
-    debugInfo.value = `hash: ${window.location.hash} | isGame: ${isGame}`;
-    if (isGame) view.value = 'game';
+    const hash = window.location.hash;
+
+    if (hash === '#moongame') {
+      view.value = 'game';
+    } else if (hash === '#share/moonquiz') {
+      await share('moonquiz');
+      liff.closeWindow();
+    } else if (hash === '#share/dawn') {
+      await share('duanwu');
+      liff.closeWindow();
+    } else {
+      debugInfo.value = `hash: ${hash} | 無對應頁面`;
+    }
   } catch (error) {
     debugInfo.value = `ERROR: ${String(error)}`;
     console.error('LIFF 初始化失敗', error);
