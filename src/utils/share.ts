@@ -148,6 +148,8 @@ export const share = async (key: keyof typeof SHARES) => {
   return result;
 };
 
+const CARD_IMG = 'https://res.cloudinary.com/dj4rwmdiu/image/upload/v1789306851/img04_%E8%B3%80%E5%8D%A1_o2ijsn.png';
+
 export const sendToChat = () => liff.sendMessages([
   {
     type: 'text',
@@ -157,53 +159,8 @@ export const sendToChat = () => liff.sendMessages([
 長按下方賀卡即可直接儲存，轉傳祝福給親朋好友！`,
   },
   {
-    type: 'flex',
-    altText: '中秋尋物賀卡｜找出藏起來的中秋小物',
-    contents: {
-      type: 'bubble',
-      size: 'giga',
-      body: {
-        type: 'box',
-        layout: 'vertical',
-        paddingAll: 'none',
-        contents: [
-          {
-            type: 'image',
-            url: 'https://res.cloudinary.com/dj4rwmdiu/image/upload/v1789306852/img01_cover_slewoq.png',
-            size: 'full',
-            aspectMode: 'cover',
-            aspectRatio: '1644:734',
-          },
-          {
-            type: 'box',
-            layout: 'vertical',
-            paddingTop: '12px',
-            paddingStart: '16px',
-            paddingEnd: '16px',
-            paddingBottom: '12px',
-            spacing: 'md',
-            contents: [
-              { type: 'text', text: '【南投尋兔趣】找出隱藏玉兔！', weight: 'bold', size: '20px', wrap: true },
-              { type: 'text', text: '熱鬧的南投廟埕藏了 3 隻調皮玉兔 🐰', wrap: true, size: '17px', color: '#333333' },
-              { type: 'text', text: '點擊畫面把它們全部找出來，即可領取限量中秋賀卡！', wrap: true, size: '17px', color: '#333333' },
-              {
-                type: 'box',
-                layout: 'vertical',
-                height: '48px',
-                backgroundColor: '#00C853',
-                cornerRadius: '999px',
-                justifyContent: 'center',
-                alignItems: 'center',
-                margin: 'sm',
-                action: { type: 'uri', label: '立刻開始尋寶', uri: gameUrl },
-                contents: [
-                  { type: 'text', text: '立刻開始尋寶', color: '#FFFFFF', weight: 'bold', size: '18px', align: 'center' },
-                ],
-              },
-            ],
-          },
-        ],
-      },
-    },
+    type: 'image',
+    originalContentUrl: CARD_IMG,
+    previewImageUrl: CARD_IMG,
   },
 ] as any);
