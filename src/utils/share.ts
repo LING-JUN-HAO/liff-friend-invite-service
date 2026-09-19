@@ -6,6 +6,8 @@ import liff from '@line/liff';
  * 用法：import { share } from '../utils/share'; 然後 share('moongame')
  */
 const officialAccountUrl = 'https://line.me/R/ti/p/%40723znbzn';
+const LIFF_ID = import.meta.env.VITE_LIFF_ID as string;
+const gameUrl = `https://liff.line.me/${LIFF_ID}#moongame`;
 
 export const SHARES = {
   // 「分享給好友玩」：立刻開始尋寶的邀請卡（連到 /moongame）
@@ -149,7 +151,59 @@ export const share = async (key: keyof typeof SHARES) => {
 export const sendToChat = () => liff.sendMessages([
   {
     type: 'text',
-    text: `🌕温世政祝大家中秋佳節愉快！\n\n月圓人團圓，祝福南投鄉親闔家平安、事事順心！\n\n世政準備了趣味尋寶小遊戲，邀大家一起找玉兔、領取專屬中秋賀卡🥮`,
+    text: `🌕感謝您一起熱情尋寶！祝您與家人：
+🥮月圓人團園，事事順心如意
+🥮闔家平安、中秋佳節愉快！
+長按下方賀卡即可直接儲存，轉傳祝福給親朋好友！`,
   },
-  { ...SHARES.moongame[0] } as any,
-]);
+  {
+    type: 'flex',
+    altText: '中秋尋物賀卡｜找出藏起來的中秋小物',
+    contents: {
+      type: 'bubble',
+      size: 'giga',
+      body: {
+        type: 'box',
+        layout: 'vertical',
+        paddingAll: 'none',
+        contents: [
+          {
+            type: 'image',
+            url: 'https://res.cloudinary.com/dj4rwmdiu/image/upload/v1789306852/img01_cover_slewoq.png',
+            size: 'full',
+            aspectMode: 'cover',
+            aspectRatio: '1644:734',
+          },
+          {
+            type: 'box',
+            layout: 'vertical',
+            paddingTop: '12px',
+            paddingStart: '16px',
+            paddingEnd: '16px',
+            paddingBottom: '12px',
+            spacing: 'md',
+            contents: [
+              { type: 'text', text: '【南投尋兔趣】找出隱藏玉兔！', weight: 'bold', size: '20px', wrap: true },
+              { type: 'text', text: '熱鬧的南投廟埕藏了 3 隻調皮玉兔 🐰', wrap: true, size: '17px', color: '#333333' },
+              { type: 'text', text: '點擊畫面把它們全部找出來，即可領取限量中秋賀卡！', wrap: true, size: '17px', color: '#333333' },
+              {
+                type: 'box',
+                layout: 'vertical',
+                height: '48px',
+                backgroundColor: '#00C853',
+                cornerRadius: '999px',
+                justifyContent: 'center',
+                alignItems: 'center',
+                margin: 'sm',
+                action: { type: 'uri', label: '立刻開始尋寶', uri: gameUrl },
+                contents: [
+                  { type: 'text', text: '立刻開始尋寶', color: '#FFFFFF', weight: 'bold', size: '18px', align: 'center' },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    },
+  },
+] as any);

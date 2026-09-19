@@ -17,7 +17,8 @@ const TARGETS: Coord[] = [
   { x: 68.0, y: 63.9 }, // 蒸籠裡
   { x: 63.8, y: 85.1 }, // 水果籃裡
 ];
-const R = 14; // 命中半徑（% of board）
+const CIRCLE_R = 10; // 視覺圈圈半徑（% of board，對應 CSS width 20%）
+const HIT_R = CIRCLE_R;  // 玉兔中心必須在圈圈內才算命中
 
 type Screen = 'game' | 'win' | 'fail' | 'reveal' | 'card';
 const screen = ref<Screen>('game');
@@ -35,7 +36,7 @@ const evaluate = (): Result => {
   markers.forEach((m) => {
     let matched = -1;
     TARGETS.forEach((t, i) => {
-      if (!foundTarget[i] && dist(m, t) <= R) matched = i;
+      if (!foundTarget[i] && dist(m, t) <= HIT_R) matched = i;
     });
     if (matched >= 0) {
       foundTarget[matched] = true;
@@ -63,7 +64,11 @@ const shownMarks = computed<Shown[]>(() => {
   if (screen.value === 'game') {
     return markers.map((m) => ({ ...m, cls: 'tap' }));
   }
-  if (screen.value === 'win' || screen.value === 'fail') {
+  if (screen.value === 'fail') {
+    const r = evaluate();
+    return markers.map((m, i) => ({ ...m, cls: r.markCls[i] === 'correct' ? 'correct' : 'tap' }));
+  }
+  if (screen.value === 'win') {
     const r = evaluate();
     return markers.map((m, i) => ({ ...m, cls: r.markCls[i] }));
   }
@@ -122,9 +127,9 @@ const download = async () => {
       </div>
 
       <p class="hint red" v-if="screen === 'fail'">💡 總共有 {{ TARGETS.length }} 隻玉兔喔！</p>
-      <p class="hint" v-else-if="screen === 'reveal'">💡 原來玉兔躲在這些地方呀！</p>
+      <p class="subtitle" v-else-if="screen === 'reveal'">💡 原來玉兔躲在這些地方呀！</p>
 
-      <p class="subtitle" v-if="screen === 'game'">點擊畫面圈出玉兔位置</p>
+      <p class="subtitle" v-if="screen === 'game' || screen === 'win'">點擊畫面圈出玉兔位置</p>
 
       <div class="board" ref="board" @click="onBoardClick" :class="{ playing: screen === 'game' }">
         <img :src="BG_IMG" alt="尋兔畫面" />
@@ -132,9 +137,9 @@ const download = async () => {
       </div>
 
       <p class="subtitle" v-if="screen === 'game'">隨時都能送出答案</p>
-      <p class="subtitle strong" v-else-if="screen === 'win'">太厲害了！{{ TARGETS.length }} 隻玉兔都被你找到了！</p>
-      <p class="subtitle strong" v-else-if="screen === 'fail'">還差一點點！還有玉兔藏在裡面</p>
-      <p class="subtitle strong" v-else-if="screen === 'reveal'">感謝參與！一樣能領取祝福賀卡唷</p>
+      <p class="subtitle" v-else-if="screen === 'win'">太厲害了！{{ TARGETS.length }} 隻玉兔都被你找到了！</p>
+      <p class="subtitle" v-else-if="screen === 'fail'">還差一點點！還有玉兔藏在裡面</p>
+      <p class="subtitle" v-else-if="screen === 'reveal'">感謝參與！一樣能領取祝福賀卡唷</p>
 
       <!-- 按鈕組 -->
       <div class="btn-group">
@@ -184,8 +189,7 @@ body { margin: 0; }
 .banner .ava { width: 40px; height: 40px; border-radius: 50%; background: #fff; flex: 0 0 40px; background-size: cover; background-position: center; }
 .hint { text-align: center; font-weight: 700; margin: 14px 0 4px; }
 .hint.red { color: #e5484d; }
-.subtitle { text-align: center; color: #555; margin: 12px 0; font-weight: 500; }
-.subtitle.strong { font-weight: 700; color: #2b2b2b; }
+.subtitle { text-align: center; color: #555; margin: 12px 0; font-weight: 400; }
 .board { position: relative; width: 100%; aspect-ratio: 1/1; border-radius: 16px; overflow: hidden; margin-top: 12px; box-shadow: 0 2px 10px rgba(0,0,0,.08); }
 .board.playing { cursor: crosshair; }
 .board img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
@@ -203,5 +207,5 @@ body { margin: 0; }
 .btn.gray { background: #9aa0a6; color: #fff; }
 .card { border-radius: 16px; overflow: hidden; margin: 14px 0 10px; box-shadow: 0 2px 10px rgba(0,0,0,.08); }
 .card img { width: 100%; display: block; }
-.save-tip { text-align: center; color: #444; margin: 14px 0; font-weight: 600; line-height: 1.7; }
+.save-tip { text-align: center; color: #555; margin: 14px 0; font-weight: 600; line-height: 1.7; }
 </style>
