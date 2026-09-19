@@ -18,8 +18,7 @@ const TARGETS: Coord[] = [
   { x: 68.0, y: 63.9 }, // 蒸籠裡
   { x: 63.8, y: 85.1 }, // 水果籃裡
 ];
-const CIRCLE_R = 10; // 視覺圈圈半徑（% of board，對應 CSS width 20%）
-const HIT_R = CIRCLE_R;  // 玉兔中心必須在圈圈內才算命中
+const HIT_R = 10; // 命中半徑（% of board）＝ 視覺圈圈半徑，玉兔中心須落在圈內
 
 type Screen = 'game' | 'win' | 'fail' | 'reveal' | 'card';
 const screen = ref<Screen>('game');
@@ -91,11 +90,7 @@ const goToCard = () => {
   liff.sendMessages([
     {
       type: 'text',
-      text: `🌕 感謝您一起熱情尋寶！祝您與家人：
-      🥮 月圓人團園，事事順心如意
-      🥮 闔家平安、中秋佳節愉快！
-      
-      💡 長按下方賀卡即可直接儲存，轉傳祝福給親朋好友！`,
+      text: `🌕 感謝您一起熱情尋寶！祝您與家人：\n🥮 月圓人團園，事事順心如意\n🥮 闔家平安、中秋佳節愉快！\n\n💡 長按下方賀卡即可直接儲存，轉傳祝福給親朋好友！`,
     },
     {
       type: 'image',
