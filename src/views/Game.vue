@@ -111,19 +111,20 @@ const submit = () => {
 };
 
 const download = async () => {
-  const isIOS = /iP(hone|ad|od)/.test(navigator.userAgent);
-  if (isIOS) {
-    window.open(CARD_IMG, '_blank');
-    return;
-  }
   const res = await fetch(CARD_IMG);
   const blob = await res.blob();
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = '中秋賀卡.png';
-  a.click();
-  URL.revokeObjectURL(url);
+  const file = new File([blob], '中秋賀卡.png', { type: 'image/png' });
+  if (navigator.canShare?.({ files: [file] })) {
+    await navigator.share({ files: [file] });
+  } else {
+    // fallback：不支援 share API 的環境（桌機等）直接下載
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = '中秋賀卡.png';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 };
 </script>
 
