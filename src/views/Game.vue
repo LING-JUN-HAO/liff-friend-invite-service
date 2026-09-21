@@ -136,9 +136,8 @@ const download = async () => {
         <span>{{ screen === 'reveal' ? '玉兔長這樣，總共有三隻唷！' : '目標：找出玉兔們' }}</span>
       </div>
 
-      <p class="hint red" v-if="screen === 'fail'">💡 總共有 {{ TARGETS.length }} 隻玉兔喔！</p>
+      <p class="subtitle red" v-if="screen === 'fail'">💡 總共有 {{ TARGETS.length }} 隻玉兔喔！</p>
       <p class="subtitle" v-else-if="screen === 'reveal'">💡 原來玉兔躲在這些地方呀！</p>
-
       <p class="subtitle" v-if="screen === 'game' || screen === 'win'">點擊畫面圈出玉兔位置</p>
 
       <div class="board" ref="board" @click="onBoardClick" :class="{ playing: screen === 'game' }">
@@ -197,9 +196,8 @@ body { margin: 0; }
 .btn-group { margin-top: auto; padding-top: 12px; }
 .banner { display: flex; align-items: center; gap: 12px; background: #22b357; color: #fff; border-radius: 14px; padding: 12px 16px; font-weight: 700; font-size: 16px; }
 .banner .ava { width: 40px; height: 40px; border-radius: 50%; background: #fff; flex: 0 0 40px; background-size: cover; background-position: center; }
-.hint { text-align: center; font-weight: 700; margin: 14px 0 4px; }
-.hint.red { color: #e5484d; }
 .subtitle { text-align: center; color: #555; margin: 12px 0; font-weight: 400; }
+.subtitle.red { color: #e5484d; font-weight: 700; }
 .board { position: relative; width: 100%; aspect-ratio: 1/1; border-radius: 16px; overflow: hidden; margin-top: 12px; box-shadow: 0 2px 10px rgba(0,0,0,.08); }
 .board.playing { cursor: crosshair; }
 .board img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
