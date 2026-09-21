@@ -87,6 +87,7 @@ const shownMarks = computed<Shown[]>(() => {
 });
 
 const goToCard = () => {
+  screen.value = 'card';
   liff.sendMessages([
     {
       type: 'text',
@@ -97,8 +98,7 @@ const goToCard = () => {
       originalContentUrl: CARD_IMG,
       previewImageUrl: CARD_IMG,
     },
-  ]);
-  screen.value = 'card';
+  ]).catch((e) => console.error('sendMessages failed', e));
 };
 
 const restart = () => {

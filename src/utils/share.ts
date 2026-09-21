@@ -144,6 +144,9 @@ export const SHARES = {
 export const share = async (key: keyof typeof SHARES) => {
   const messages = SHARES[key];
   const result = await liff.shareTargetPicker(messages as any);
+  if (result?.status === 'success') {
+    liff.closeWindow();
+  }
   return result;
 };
 
