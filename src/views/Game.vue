@@ -10,6 +10,7 @@ import { share } from '../utils/share';
  */
 const BG_IMG = 'https://res.cloudinary.com/dj4rwmdiu/image/upload/v1789306852/img03_%E5%B0%8B%E6%89%BE%E7%8E%89%E5%85%94_o7km6z.png';     // 藏了玉兔的插圖（建議正方形 1:1）
 const CARD_IMG = 'https://res.cloudinary.com/dj4rwmdiu/image/upload/v1789306851/Moon%20Festival%20Greeting%20Card.png';   // 中秋賀卡圖
+const CARD_DOWNLOAD_URL = CARD_IMG.replace('/upload/', '/upload/fl_attachment:moon-festival-card/'); // 帶 Content-Disposition: attachment，瀏覽器會直接下載
 const RABBIT_IMG = 'https://res.cloudinary.com/dj4rwmdiu/image/upload/v1789306854/img03_rabbit_ixxu9s.png'; // 玉兔頭像（綠色 banner 左側）
 
 type Coord = { x: number; y: number };
@@ -141,8 +142,8 @@ const download = async () => {
   } finally {
     sharing = false;
   }
-  // fallback：LINE Android WebView 不支援 Web Share，blob 下載也不可靠，改用外部瀏覽器開圖讓使用者長按儲存
-  liff.openWindow({ url: CARD_IMG, external: true });
+  // fallback：LINE Android WebView 不支援 Web Share，blob 下載也不可靠，改用外部瀏覽器開下載網址直接存檔
+  liff.openWindow({ url: CARD_DOWNLOAD_URL, external: true });
 };
 </script>
 
