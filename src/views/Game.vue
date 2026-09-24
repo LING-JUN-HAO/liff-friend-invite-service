@@ -88,6 +88,7 @@ const shownMarks = computed<Shown[]>(() => {
 
 const goToCard = () => {
   screen.value = 'card';
+  preloadCard().catch((e) => console.warn('preload card failed', e));
   liff.sendMessages([
     {
       type: 'text',
@@ -110,21 +111,38 @@ const submit = () => {
   screen.value = r.hits === TARGETS.length ? 'win' : 'fail';
 };
 
+// 進入賀卡畫面就先抓圖：navigator.share 必須在點擊後短時間內呼叫，
+// 點了才 fetch 的話網路一慢就會超時（NotAllowedError）
+let cardFile: Promise<File> | null = null;
+const preloadCard = () => {
+  cardFile ??= fetch(CARD_IMG)
+    .then((res) => res.blob())
+    .then((blob) => new File([blob], '中秋賀卡.png', { type: 'image/png' }))
+    .catch((e) => {
+      cardFile = null; // 失敗就讓下次點擊重抓
+      throw e;
+    });
+  return cardFile;
+};
+
+let sharing = false;
 const download = async () => {
-  const res = await fetch(CARD_IMG);
-  const blob = await res.blob();
-  const file = new File([blob], '中秋賀卡.png', { type: 'image/png' });
-  if (navigator.canShare?.({ files: [file] })) {
-    await navigator.share({ files: [file] });
-  } else {
-    // fallback：不支援 share API 的環境（桌機等）直接下載
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = '中秋賀卡.png';
-    a.click();
-    URL.revokeObjectURL(url);
+  if (sharing) return; // 前一次分享面板還沒關，再呼叫會 InvalidStateError
+  sharing = true;
+  try {
+    const file = await preloadCard();
+    if (navigator.canShare?.({ files: [file] })) {
+      await navigator.share({ files: [file] });
+      return;
+    }
+  } catch (e) {
+    if ((e as Error).name === 'AbortError') return; // 使用者自己關掉分享面板
+    console.warn('share failed', e);
+  } finally {
+    sharing = false;
   }
+  // fallback：LINE Android WebView 不支援 Web Share，blob 下載也不可靠，改用外部瀏覽器開圖讓使用者長按儲存
+  liff.openWindow({ url: CARD_IMG, external: true });
 };
 </script>
 
