@@ -5,7 +5,7 @@ import liff from '@line/liff';
  * 結構完全自由，要加就把一段 flex 貼進來、給一個 key。
  * 用法：import { share } from '../utils/share'; 然後 share('moongame')
  */
-const officialAccountUrl = 'https://line.me/R/ti/p/%40723znbzn';
+const officialAccountUrl = 'https://line.me/R/ti/p/%40886mivhm';
 
 
 export const SHARES = {
