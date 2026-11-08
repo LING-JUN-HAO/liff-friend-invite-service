@@ -2,13 +2,13 @@
 import { onMounted, ref, watch } from "vue";
 import liff from "@line/liff";
 import Game from './views/Game.vue';
-import SupportCard from './views/supportCard/index.vue';
+import ChangeVibe from './views/changeVibe/index.vue';
 import NotInLine from './views/NotInLine.vue';
 import { share } from './utils/share';
 
 const LIFF_ID = import.meta.env.VITE_LIFF_ID as string;
 
-type View = 'game' | 'supportcard' | 'not-in-line' | 'none';
+type View = 'game' | 'changevibe' | 'not-in-line' | 'none';
 const view = ref<View>('none');
 const debugInfo = ref('');
 
@@ -24,7 +24,7 @@ watch(view, (v) => {
 onMounted(async () => {
   if (import.meta.env.DEV) {
     const hash = window.location.hash;
-    view.value = hash === '#moongame' ? 'game' : 'supportcard';
+    view.value = hash === '#moongame' ? 'game' : 'changevibe';
     return;
   }
   try {
@@ -40,8 +40,8 @@ onMounted(async () => {
     const hash = window.location.hash;
     if (hash === '#moongame') {
       view.value = 'game';
-    } else if (hash === '#supportcard') {
-      view.value = 'supportcard';
+    } else if (hash === '#changevibe') {
+      view.value = 'changevibe';
     } else if (hash === '#share/moonquiz') {
       await share('moonquiz');
       liff.closeWindow();
@@ -60,7 +60,7 @@ onMounted(async () => {
 
 <template>
   <Game v-if="view === 'game'" />
-  <SupportCard v-else-if="view === 'supportcard'" />
+  <ChangeVibe v-else-if="view === 'changevibe'" />
   <NotInLine v-else-if="view === 'not-in-line'" />
   <pre v-else style="padding:16px;font-size:12px;word-break:break-all;white-space:pre-wrap;">{{ debugInfo }}</pre>
 </template>

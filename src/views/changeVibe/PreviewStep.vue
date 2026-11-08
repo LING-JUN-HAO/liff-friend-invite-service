@@ -5,7 +5,6 @@ defineProps<{
   avatarUrl: string;
   nickname: string;
   cardSubLabel: string;
-  locationLabel: string;
 }>();
 
 defineEmits<{
@@ -20,7 +19,6 @@ defineEmits<{
       :avatar-url="avatarUrl"
       :nickname="nickname"
       :card-sub-label="cardSubLabel"
-      :location-label="locationLabel"
     />
 
     <p class="hint-text">確認沒問題，就讓這股力量流出去</p>
@@ -42,7 +40,7 @@ defineEmits<{
 }
 .hint-text {
   text-align: center;
-  color: #888;
+  color: #2b2b2b;
   font-size: 13px;
   line-height: 1.7;
   margin: 16px 0;
@@ -67,5 +65,5 @@ defineEmits<{
   margin-top: 12px;
 }
 .btn--green { background: #06C755; color: #fff; }
-.btn--outline { background: #fff; color: #444; border: 1.5px solid #d5d9de; }
+.btn--outline { background: #fff; color: #444; border: 1.5px solid #d5d9de; font-weight: 400; }
 </style>

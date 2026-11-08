@@ -15,7 +15,6 @@ const avatarUrl = ref('');
 // 表單資料
 const nickname = ref('');
 const personType = ref<'nantou' | 'other'>('nantou');
-const residenceType = ref<'local' | 'away'>('local');
 const township = ref('');
 const duration = ref<Duration | ''>('');
 const agreedToTerms = ref(false);
@@ -44,35 +43,19 @@ const isNantou = computed(() => personType.value === 'nantou');
 
 const onPersonTypeChange = (val: 'nantou' | 'other') => {
   personType.value = val;
-  residenceType.value = 'local';
   township.value = '';
   duration.value = '';
 };
-const onResidenceTypeChange = (val: 'local' | 'away') => {
-  residenceType.value = val;
-  township.value = '';
-  duration.value = '';
-};
-
-const durationDisplayMap: Record<Duration, string> = {
-  '1y':      '1 年',
-  '5y':      '5 年',
-  'over10y': '10 年以上',
-  'forever': '一輩子',
-};
-const durationDisplay = computed(() => duration.value ? durationDisplayMap[duration.value] : '');
 
 const cardSubLabel = computed(() => {
-  if (personType.value === 'nantou') {
-    return `${township.value}・政波成員`;
+  if (personType.value === 'other') return '我是南投之友';
+  switch (duration.value) {
+    case '1y':      return `我是${township.value}新人`;
+    case '5y':      return `我是${township.value}熟面孔`;
+    case 'over10y': return `我是${township.value}資深老朋友`;
+    case 'forever': return `我是${township.value}在地人`;
+    default:        return '';
   }
-  return '我關心南投';
-});
-
-const locationLabel = computed(() => {
-  if (personType.value !== 'nantou') return '';
-  if (residenceType.value === 'local') return `住在南投 ${durationDisplay.value}`;
-  return `離鄉 ${durationDisplay.value}`;
 });
 
 const canSubmitForm = computed(() => {
@@ -96,14 +79,12 @@ const confirmCard = () => { step.value = 'done'; };
       :avatar-url="avatarUrl"
       :nickname="nickname"
       :person-type="personType"
-      :residence-type="residenceType"
       :township="township"
       :duration="duration"
       :agreed-to-terms="agreedToTerms"
       :can-submit="canSubmitForm"
       @update:nickname="nickname = $event"
       @update:person-type="onPersonTypeChange"
-      @update:residence-type="onResidenceTypeChange"
       @update:township="township = $event"
       @update:duration="duration = $event"
       @update:agreed-to-terms="agreedToTerms = $event"
@@ -116,7 +97,6 @@ const confirmCard = () => { step.value = 'done'; };
       :avatar-url="avatarUrl"
       :nickname="nickname"
       :card-sub-label="cardSubLabel"
-      :location-label="locationLabel"
       @confirm="confirmCard"
       @back="backToForm"
     />
@@ -126,7 +106,6 @@ const confirmCard = () => { step.value = 'done'; };
       :avatar-url="avatarUrl"
       :nickname="nickname"
       :card-sub-label="cardSubLabel"
-      :location-label="locationLabel"
     />
   </div>
 </template>

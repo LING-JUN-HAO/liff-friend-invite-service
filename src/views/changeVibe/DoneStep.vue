@@ -8,7 +8,6 @@ const props = defineProps<{
   avatarUrl: string;
   nickname: string;
   cardSubLabel: string;
-  locationLabel: string;
 }>();
 
 
@@ -35,98 +34,6 @@ const buildAvatarBox = (url: string, outerSize: string, innerSize: string, paddi
     }],
   }],
 });
-
-const buildChatCard = () => {
-  const nickname = props.nickname?.trim();
-
-  const imageContents = props.avatarUrl?.startsWith('https://')
-    ? [buildAvatarBox(props.avatarUrl, '88px', '80px', '4px')]
-    : [];
-
-  const subLabelContents = props.cardSubLabel?.trim()
-    ? [{
-        type: 'text',
-        text: props.cardSubLabel.trim(),
-        color: '#666666',
-        size: 'sm',
-        align: 'center',
-      }]
-    : [];
-
-  const locationContents = props.locationLabel?.trim()
-    ? [{
-        type: 'text',
-        text: props.locationLabel.trim(),
-        color: '#666666',
-        size: 'sm',
-        align: 'center',
-      }]
-    : [];
-
-  const buttonContents = [{
-    type: 'box',
-    layout: 'vertical',
-    backgroundColor: '#1d3461',
-    cornerRadius: '999px',
-    paddingAll: '12px',
-    margin: 'sm',
-    contents: [{
-      type: 'text',
-      text: '成為政波，改變南投！',
-      color: '#ffffff',
-      weight: 'bold',
-      align: 'center',
-      size: 'sm',
-    }],
-  }];
-
-  return {
-    type: 'flex',
-    altText: `${nickname} 加入政波 #一股改變南投的力量`,
-    contents: {
-      type: 'bubble',
-      body: {
-        type: 'box',
-        backgroundColor: '#ffffff',
-        layout: 'vertical',
-        paddingAll: '24px',
-        alignItems: 'center',
-        contents: [
-          ...imageContents,
-          {
-            type: 'text',
-            text: nickname,
-            weight: 'bold',
-            size: 'xl',
-            align: 'center',
-            margin: 'md',
-            wrap: true,
-          },
-          ...subLabelContents,
-          ...locationContents,
-          {
-            type: 'text',
-            text: '#一股改變南投的力量',
-            color: '#1d3461',
-            weight: 'bold',
-            size: 'md',
-            align: 'center',
-            margin: 'lg',
-          },
-          ...buttonContents,
-          {
-            type: 'text',
-            text: '南投縣長候選人　温世政',
-            color: '#aaaaaa',
-            size: 'xs',
-            align: 'center',
-            margin: 'sm',
-          },
-        ],
-      },
-    },
-  };
-};
 
 
 const buildInviteCard = () => {
@@ -172,18 +79,18 @@ const buildInviteCard = () => {
         layout: 'vertical',
         paddingAll: 'none',
         contents: [
-          // 淺藍色會員區塊
+          // 淺綠色會員區塊
           {
             type: 'box',
             layout: 'vertical',
-            backgroundColor: '#DCE7F8',
+            backgroundColor: '#E8F7ED',
             paddingAll: '24px',
             alignItems: 'center',
             contents: [
               ...imageContents,
               {
                 type: 'text',
-                text: nickname,
+                text: '我是 ' + nickname,
                 weight: 'bold',
                 size: 'xl',
                 color: '#222222',
@@ -205,10 +112,10 @@ const buildInviteCard = () => {
             ],
           },
 
-          // 淺藍分隔線
+          // 淺綠分隔線
           {
             type: 'separator',
-            color: '#B6CEEF',
+            color: '#A8D5B8',
           },
 
           // 下方邀請區塊
@@ -270,12 +177,21 @@ const cardImageUrl = ref('');
 const captureOptions = {
   useCORS: true,
   scale: Math.min(Math.max(window.devicePixelRatio || 1, 2), 3),
-  backgroundColor: '#dde8f7',
+  backgroundColor: null,
 };
 
 onMounted(async () => {
   const el = document.getElementById('card-capture');
   if (!el) return;
+  // 等卡片內所有圖片（背景圖、頭貼）載入完成再截圖
+  const images = Array.from(el.querySelectorAll('img'));
+  await Promise.all(
+    images.map(img =>
+      img.complete
+        ? Promise.resolve()
+        : new Promise<void>(resolve => { img.onload = () => resolve(); img.onerror = () => resolve(); })
+    )
+  );
   try {
     const { default: html2canvas } = await import('html2canvas');
     const canvas = await html2canvas(el, captureOptions);
@@ -321,21 +237,6 @@ const inviteFriends = async () => {
   }
 };
 
-const sendToChat = async () => {
-  try {
-    const context = liff.getContext();
-    const chatTypes = ['utou', 'room', 'group', 'square_chat'];
-    if (!context || !chatTypes.includes(context.type)) {
-      showToast('請從 LINE 聊天室開啟此頁面，才能傳送訊息');
-      return;
-    }
-    await liff.sendMessages([buildChatCard() as any]);
-    showToast('已傳送到聊天室！');
-  } catch (e) {
-    showToast(`傳送失敗：${String(e)}`);
-    console.error(e);
-  }
-};
 </script>
 
 <template>
@@ -346,7 +247,6 @@ const sendToChat = async () => {
         :avatar-url="avatarUrl"
         :nickname="nickname"
         :card-sub-label="cardSubLabel"
-        :location-label="locationLabel"
       />
     </div>
 
@@ -354,12 +254,11 @@ const sendToChat = async () => {
     <img v-if="cardImageUrl" :src="cardImageUrl" class="card-preview" alt="政波卡" />
     <div v-else class="card-placeholder" />
 
-    <p class="hint-text">你的力量已匯聚成流<br/>傳出去，讓希望擴散成波 🌊<br/>長按圖片可以直接儲存</p>
+    <p class="hint-text">傳出去，讓希望擴散成波🌊<br/>長按圖片也可以直接儲存</p>
 
     <div class="btn-group">
-      <button class="btn btn--green" @click="saveImage">儲存圖片</button>
-      <button class="btn btn--outline" @click="sendToChat">傳到聊天室</button>
-      <button class="btn btn--green" @click="inviteFriends">擴散這一波</button>
+      <button class="btn btn--dark" @click="saveImage">儲存圖片</button>
+      <button class="btn btn--green" @click="inviteFriends">分享給朋友</button>
     </div>
 
     <Transition name="toast">
@@ -381,6 +280,7 @@ const sendToChat = async () => {
   left: -9999px;
   top: 0;
   pointer-events: none;
+  width: calc(100vw - 40px);
 }
 .card-preview {
   width: 100%;
@@ -389,9 +289,9 @@ const sendToChat = async () => {
 }
 .card-placeholder {
   width: 100%;
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 9 / 16;
   border-radius: 20px;
-  background: #dde8f7;
+  background: #e9e9eb;
 }
 .hint-text {
   text-align: center;
@@ -419,8 +319,8 @@ const sendToChat = async () => {
   transition: opacity .15s;
   margin-top: 12px;
 }
+.btn--dark { background: #01655B; color: #fff; }
 .btn--green { background: #06C755; color: #fff; }
-.btn--outline { background: #fff; color: #444; border: 1.5px solid #d5d9de; }
 
 .toast {
   position: fixed;

@@ -1,43 +1,32 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-
 type Duration = '1y' | '5y' | 'over10y' | 'forever'
 
 const DURATION_OPTIONS = [
-  { value: '1y',      label: '1年內'    },
-  { value: '5y',      label: '5年內'    },
-  { value: 'over10y', label: '10年以上' },
+  { value: '1y',      label: '一年內'    },
+  { value: '5y',      label: '5 年內'    },
+  { value: 'over10y', label: '10 年以上' },
   { value: 'forever', label: '一輩子'   },
 ] as const satisfies { value: Duration; label: string }[]
 
 const NANTOU_TOWNSHIPS = [
   '南投市', '埔里鎮', '草屯鎮', '竹山鎮', '集集鎮',
-  '名間鄉', '鹿谷鄉', '中寮鄉', '魚池鄉', '國姓鄉',
-  '水里鄉', '信義鄉', '仁愛鄉',
+  '名間鄉', '中寮鄉', '鹿谷鄉', '水里鄉', '魚池鄉',
+  '國姓鄉', '信義鄉', '仁愛鄉',
 ];
 
-const props = defineProps<{
+defineProps<{
   avatarUrl: string;
   nickname: string;
   personType: 'nantou' | 'other';
-  residenceType: 'local' | 'away';
   township: string;
   duration: Duration | '';
   agreedToTerms: boolean;
   canSubmit: boolean;
 }>();
 
-const townshipLabel = computed(() =>
-  props.residenceType === 'local' ? '你住在南投哪個鄉鎮市？' : '你的老家在南投哪個鄉鎮市？',
-);
-const durationLabel = computed(() =>
-  props.residenceType === 'local' ? '你在南投生活多久了呢？' : '你離開南投多久了呢？',
-);
-
 const emit = defineEmits<{
   'update:nickname': [value: string];
   'update:personType': [value: 'nantou' | 'other'];
-  'update:residenceType': [value: 'local' | 'away'];
   'update:township': [value: string];
   'update:duration': [value: Duration];
   'update:agreedToTerms': [value: boolean];
@@ -56,12 +45,12 @@ const emit = defineEmits<{
           <img v-if="avatarUrl" :src="avatarUrl" class="avatar-img" crossorigin="anonymous" />
           <div v-else class="avatar-placeholder"></div>
         </div>
-        <span class="avatar-label">已帶入你的 LINE 頭貼</span>
+        <span class="avatar-label">已帶入您的 LINE 頭貼</span>
       </div>
 
       <!-- 暱稱 -->
       <div class="field">
-        <label class="field__label">你想怎麼讓大家稱呼你？（最多 10 字，可用化名）</label>
+        <label class="field__label">您的暱稱？(最多 10 字，可用暱稱)</label>
         <div class="input-wrap">
           <input
             :value="nickname"
@@ -74,9 +63,9 @@ const emit = defineEmits<{
         </div>
       </div>
 
-      <!-- 你是南投人還是外縣市朋友 -->
+      <!-- 南投人 or 外縣市朋友 -->
       <div class="field">
-        <label class="field__label">你是南投人，還是關心南投的朋友？</label>
+        <label class="field__label">您是南投人，還是關心南投的朋友？</label>
         <div class="toggle-group">
           <button
             class="toggle-btn"
@@ -87,36 +76,18 @@ const emit = defineEmits<{
             class="toggle-btn"
             :class="{ 'toggle-btn--active': personType === 'other' }"
             @click="emit('update:personType', 'other')"
-          >外縣市民眾</button>
+          >外縣市朋友</button>
         </div>
       </div>
 
-      <!-- 外縣市民眾特殊提示 -->
+      <!-- 外縣市朋友特殊提示 -->
       <div v-if="personType === 'other'" class="other-notice">
-        <p>不是南投人也歡迎！</p>
-        <p>你的關心，也是改變南投的一股力量。</p>
-      </div>
-
-      <!-- 住在南投 / 駐外地（南投人限定） -->
-      <div v-if="personType === 'nantou'" class="field">
-        <label class="field__label">你現在人在哪裡？</label>
-        <div class="toggle-group">
-          <button
-            class="toggle-btn"
-            :class="{ 'toggle-btn--active': residenceType === 'local' }"
-            @click="emit('update:residenceType', 'local')"
-          >住在南投</button>
-          <button
-            class="toggle-btn"
-            :class="{ 'toggle-btn--active': residenceType === 'away' }"
-            @click="emit('update:residenceType', 'away')"
-          >駐外地</button>
-        </div>
+        <p>雖然不是南投居民，但我也要成為南投的一股力量 💪</p>
       </div>
 
       <!-- 鄉鎮市選擇（南投人限定） -->
       <div v-if="personType === 'nantou'" class="field">
-        <label class="field__label">{{ townshipLabel }}</label>
+        <label class="field__label">您住在南投哪個鄉鎮市？</label>
         <select
           :value="township"
           class="field__select"
@@ -129,7 +100,7 @@ const emit = defineEmits<{
 
       <!-- 年資（南投人限定） -->
       <div v-if="personType === 'nantou'" class="field">
-        <label class="field__label">{{ durationLabel }}</label>
+        <label class="field__label">您在南投生活多久了呢？</label>
         <div class="duration-group">
           <button
             v-for="{ value, label } in DURATION_OPTIONS"
@@ -153,7 +124,7 @@ const emit = defineEmits<{
         </label>
       </div>
 
-      <button class="btn btn--green" :disabled="!canSubmit" @click="emit('submit')">匯入力量</button>
+      <button class="btn btn--green" :disabled="!canSubmit" @click="emit('submit')">製作政波卡</button>
     </div>
   </div>
 </template>
@@ -181,40 +152,48 @@ const emit = defineEmits<{
   align-items: center;
   gap: 12px;
   margin-bottom: 20px;
+  background: #06C755;
+  border-radius: 12px;
+  padding: 12px 16px;
 }
-.avatar-wrap { flex: 0 0 64px; }
+.avatar-wrap { flex: 0 0 44px; }
 .avatar-img {
-  width: 64px;
-  height: 64px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   object-fit: cover;
   display: block;
+  border: 2px solid rgba(255,255,255,.8);
 }
 .avatar-placeholder {
-  width: 64px;
-  height: 64px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  background: #d5d9de;
+  background: rgba(255,255,255,.35);
+  border: 2px solid rgba(255,255,255,.8);
 }
-.avatar-label { font-size: 16px; color: #555; }
+.avatar-label { font-size: 16px; font-weight: 400; color: #fff; }
 
 /* 表單欄位 */
 .field { margin-bottom: 20px; }
 .field__label {
   display: block;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 400;
   color: #2b2b2b;
   margin-bottom: 10px;
 }
 .input-wrap { position: relative; }
 .field__input {
   width: 100%;
-  border: 1.5px solid #22b357;
+  border: 1.5px solid #d5d9de;
   border-radius: 10px;
   padding: 12px 40px 12px 14px;
   font-size: 16px;
   outline: none;
+}
+.field__input:focus, .field__input:not(:placeholder-shown) {
+  border-color: #22b357;
 }
 .char-count {
   position: absolute;
@@ -222,7 +201,7 @@ const emit = defineEmits<{
   top: 50%;
   transform: translateY(-50%);
   font-size: 12px;
-  color: #aaa;
+  color: #2b2b2b;
 }
 .field__select {
   width: 100%;
@@ -255,7 +234,7 @@ const emit = defineEmits<{
   border-radius: 8px;
   background: transparent;
   font-size: 15px;
-  font-weight: 500;
+  font-weight: 400;
   color: #666;
   cursor: pointer;
   transition: all .2s;
@@ -269,26 +248,12 @@ const emit = defineEmits<{
 
 /* 外縣市提示 */
 .other-notice {
-  background: #e8f7ed;
+  background: #e9e9eb;
   border-radius: 12px;
   padding: 14px;
   margin-bottom: 20px;
 }
-.other-notice__icon {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: #22b357;
-  color: #fff;
-  font-size: 14px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: 0 0 24px;
-}
-.other-notice p { margin: 0 0 4px; font-size: 14px; color: #1a7f3a; line-height: 1.6; }
-.other-notice p:last-child { margin-bottom: 0; }
+.other-notice p { margin: 0; font-size: 16px; color: #2b2b2b; line-height: 1.6; }
 
 /* 年資選擇 */
 .duration-group {
@@ -302,16 +267,16 @@ const emit = defineEmits<{
   border: 1.5px solid #d5d9de;
   border-radius: 999px;
   background: #fff;
-  font-size: 14px;
-  font-weight: 500;
-  color: #2b2b2b;
+  font-size: 15px;
+  font-weight: 400;
+  color: #aaa;
   cursor: pointer;
   transition: all .15s;
 }
 .duration-btn--active {
-  border-color: #22b357;
-  background: #e8f7ed;
-  color: #22b357;
+  border-color: #06C755;
+  background: #e8fbf0;
+  color: #06C755;
   font-weight: 700;
 }
 
@@ -345,7 +310,7 @@ const emit = defineEmits<{
   background: none;
   border: none;
   padding: 0;
-  color: #22b357;
+  color: #1a73e8;
   text-decoration: underline;
   cursor: pointer;
   font-size: inherit;
