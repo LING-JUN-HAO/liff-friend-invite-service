@@ -11,164 +11,75 @@ const props = defineProps<{
 }>();
 
 
-const buildAvatarBox = (url: string, outerSize: string, innerSize: string, padding: string) => ({
-  type: 'box',
-  layout: 'vertical',
-  width: outerSize,
-  height: outerSize,
-  cornerRadius: '999px',
-  backgroundColor: '#FFFFFF',
-  paddingAll: padding,
-  contents: [{
-    type: 'box',
-    layout: 'vertical',
-    width: innerSize,
-    height: innerSize,
-    cornerRadius: '999px',
-    contents: [{
+const HERO_IMAGE_URL = 'https://res.cloudinary.com/dj4rwmdiu/image/upload/v1794013731/%E8%81%8A%E5%A4%A9%E5%AE%A4_jbs2jz.png';
+const LIFF_URL = 'https://liff.line.me/2011622081-De9SToPC#changevibe';
+
+const buildInviteCard = () => ({
+  type: 'flex',
+  altText: '加入 #一股改變南投的力量',
+  contents: {
+    type: 'bubble',
+    size: 'giga',
+    hero: {
       type: 'image',
-      url: url.trim(),
-      size: innerSize,
+      url: HERO_IMAGE_URL,
+      size: 'full',
+      aspectRatio: '20:9',
       aspectMode: 'cover',
-      aspectRatio: '1:1',
-    }],
-  }],
-});
-
-
-const buildInviteCard = () => {
-  const officialAccountUrl = 'https://line.me/R/ti/p/%40723znbzn';
-
-  const nickname = props.nickname?.trim();
-
-  const subLabel = props.cardSubLabel?.trim();
-
-  const imageContents = props.avatarUrl?.startsWith('https://')
-    ? [buildAvatarBox(props.avatarUrl, '88px', '78px', '5px')]
-    : [{
+      action: { type: 'uri', label: '加入政波', uri: LIFF_URL },
+    },
+    body: {
+      type: 'box',
+      layout: 'vertical',
+      paddingAll: 'none',
+      contents: [{
         type: 'box',
         layout: 'vertical',
-        width: '88px',
-        height: '88px',
-        cornerRadius: '999px',
-        backgroundColor: '#FFFFFF',
-        paddingAll: '5px',
-        contents: [{
-          type: 'box',
-          layout: 'vertical',
-          width: '78px',
-          height: '78px',
-          backgroundColor: '#C5CFDB',
-          cornerRadius: '999px',
-          contents: [],
-        }],
-      }];
-
-  const memberInfo = [
-    subLabel,
-  ].filter(Boolean).join('・');
-
-  return {
-    type: 'flex',
-    altText: `${nickname} 邀請你加入政波！`,
-    contents: {
-      type: 'bubble',
-      size: 'mega',
-      body: {
-        type: 'box',
-        layout: 'vertical',
-        paddingAll: 'none',
+        paddingTop: '24px',
+        paddingStart: '20px',
+        paddingEnd: '20px',
+        paddingBottom: '20px',
+        spacing: 'xl',
         contents: [
-          // 淺綠色會員區塊
+          {
+            type: 'text',
+            text: '#一股改變南投的力量',
+            weight: 'bold',
+            size: '20px',
+            color: '#222222',
+            wrap: true,
+          },
+          {
+            type: 'text',
+            text: '輸入暱稱、選擇你和南投的關係，馬上完成專屬於你的政波卡。',
+            wrap: true,
+            size: '18px',
+            color: '#555555',
+          },
           {
             type: 'box',
             layout: 'vertical',
-            backgroundColor: '#E8F7ED',
-            paddingAll: '24px',
+            height: '50px',
+            backgroundColor: '#01655B',
+            cornerRadius: '999px',
+            justifyContent: 'center',
             alignItems: 'center',
-            contents: [
-              ...imageContents,
-              {
-                type: 'text',
-                text: '我是 ' + nickname,
-                weight: 'bold',
-                size: 'xl',
-                color: '#222222',
-                align: 'center',
-                margin: 'lg',
-                wrap: true,
-              },
-              ...(memberInfo
-                ? [{
-                    type: 'text',
-                    text: memberInfo,
-                    color: '#555555',
-                    size: 'sm',
-                    align: 'center',
-                    margin: 'sm',
-                    wrap: true,
-                  }]
-                : []),
-            ],
-          },
-
-          // 淺綠分隔線
-          {
-            type: 'separator',
-            color: '#A8D5B8',
-          },
-
-          // 下方邀請區塊
-          {
-            type: 'box',
-            layout: 'vertical',
-            backgroundColor: '#FFFFFF',
-            paddingAll: '20px',
-            contents: [
-              {
-                type: 'text',
-                text: '我也加入政波',
-                weight: 'bold',
-                size: 'lg',
-                color: '#222222',
-              },
-              {
-                type: 'text',
-                text: '30 秒做出專屬於你的政波卡',
-                size: 'sm',
-                color: '#666666',
-                margin: 'sm',
-                wrap: true,
-              },
-
-              {
-                type: 'box',
-                layout: 'vertical',
-                backgroundColor: '#06C755',
-                cornerRadius: '999px',
-                paddingAll: '14px',
-                margin: 'lg',
-                action: {
-                  type: 'uri',
-                  label: '我也加入政波',
-                  uri: officialAccountUrl,
-                },
-                contents: [{
-                  type: 'text',
-                  text: '我也加入政波',
-                  color: '#FFFFFF',
-                  weight: 'bold',
-                  size: 'md',
-                  align: 'center',
-                }],
-              },
-            ],
+            margin: 'xl',
+            action: { type: 'uri', label: '加入政波', uri: LIFF_URL },
+            contents: [{
+              type: 'text',
+              text: '加入政波',
+              color: '#FFFFFF',
+              weight: 'bold',
+              size: '18px',
+              align: 'center',
+            }],
           },
         ],
-      },
+      }],
     },
-  };
-};
+  },
+});
 
 
 const cardImageUrl = ref('');
@@ -225,7 +136,7 @@ const inviteFriends = async () => {
   try {
     const inviteText = {
       type: 'text',
-      text: `我成為政波了，你也一起來，讓希望擴散成波！\n#一股改變南投的力量`,
+      text: `我剛做了我的「政波卡」！\n邀請你也一起來製作政波卡，讓希望擴散成波！\n\n#一股改變南投的力量`,
     };
     const result = await liff.shareTargetPicker([inviteText, buildInviteCard()] as any);
     if (result?.status === 'success') {
