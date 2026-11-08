@@ -206,8 +206,8 @@ const inviteFriends = async () => {
 }
 .hint-text {
   text-align: center;
-  color: #888;
-  font-size: 13px;
+  color: #2b2b2b;
+  font-size: 16px;
   line-height: 1.7;
   margin: 16px 0;
 }
