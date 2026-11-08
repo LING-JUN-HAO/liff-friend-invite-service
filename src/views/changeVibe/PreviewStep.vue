@@ -41,16 +41,16 @@ defineEmits<{
 .hint-text {
   text-align: center;
   color: #2b2b2b;
-  font-size: 13px;
+  font-size: 18px;
   line-height: 1.7;
-  margin: 16px 0;
+  margin-top: auto;
+  margin-bottom: 16px;
+  padding-top: 16px;
 }
 .btn-group {
   display: flex;
   flex-direction: column;
   gap: 0;
-  margin-top: auto;
-  padding-top: 8px;
 }
 .btn {
   display: block;
