@@ -2,7 +2,6 @@
 import { onMounted, ref } from 'vue';
 import liff from '@line/liff';
 import CardDisplay from './CardDisplay.vue';
-import { shareOrDownload } from '../../utils/download';
 
 const props = defineProps<{
   avatarUrl: string;
@@ -110,19 +109,6 @@ onMounted(async () => {
   } catch (e) { console.error('卡片預覽產生失敗', e); }
 });
 
-const saveImage = async () => {
-  const el = document.getElementById('card-capture');
-  if (!el) return;
-  try {
-    const { default: html2canvas } = await import('html2canvas');
-    const canvas = await html2canvas(el, captureOptions);
-    canvas.toBlob(async (blob) => {
-      if (!blob) return;
-      await shareOrDownload(blob, '政波卡.png');
-    }, 'image/png');
-  } catch (e) { console.error('儲存圖片失敗', e); }
-};
-
 const toastMessage = ref('');
 let toastTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -165,10 +151,9 @@ const inviteFriends = async () => {
     <img v-if="cardImageUrl" :src="cardImageUrl" class="card-preview" alt="政波卡" />
     <div v-else class="card-placeholder" />
 
-    <p class="hint-text">傳出去，讓希望擴散成波🌊<br/>長按圖片也可以直接儲存</p>
+    <p class="hint-text">傳出去，讓希望擴散成波🌊<br/>長按圖片可以直接儲存政波卡</p>
 
     <div class="btn-group">
-      <button class="btn btn--dark" @click="saveImage">儲存圖片</button>
       <button class="btn btn--green" @click="inviteFriends">分享給朋友</button>
     </div>
 
@@ -230,7 +215,6 @@ const inviteFriends = async () => {
   transition: opacity .15s;
   margin-top: 12px;
 }
-.btn--dark { background: #01655B; color: #fff; }
 .btn--green { background: #06C755; color: #fff; }
 
 .toast {
