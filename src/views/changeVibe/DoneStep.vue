@@ -11,7 +11,7 @@ const props = defineProps<{
 
 
 const HERO_IMAGE_URL = 'https://res.cloudinary.com/dj4rwmdiu/image/upload/v1794013731/%E8%81%8A%E5%A4%A9%E5%AE%A4_jbs2jz.png';
-const LIFF_URL = 'https://liff.line.me/2011622081-De9SToPC#changevibe';
+const LIFF_URL = `https://liff.line.me/${import.meta.env.VITE_LIFF_ID}#changevibe`;
 
 const buildInviteCard = () => ({
   type: 'flex',
