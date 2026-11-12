@@ -42,7 +42,7 @@ const buildInviteCard = () => ({
         contents: [
           {
             type: 'text',
-            text: '#一股改變南投的力量',
+            text: '一起成為改變南投的力量！',
             weight: 'bold',
             size: '20px',
             color: '#222222',

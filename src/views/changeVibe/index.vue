@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
 import liff from '@line/liff';
-type Duration = '1y' | '5y' | 'over10y' | 'forever'
 import PrivacyOverlay from './PrivacyOverlay.vue';
 import FormStep from './FormStep.vue';
 import PreviewStep from './PreviewStep.vue';
@@ -16,7 +15,6 @@ const avatarUrl = ref('');
 const nickname = ref('');
 const personType = ref<'nantou' | 'other'>('nantou');
 const township = ref('');
-const duration = ref<Duration | ''>('');
 const agreedToTerms = ref(false);
 const showPrivacyDetail = ref(false);
 
@@ -53,24 +51,16 @@ const isNantou = computed(() => personType.value === 'nantou');
 const onPersonTypeChange = (val: 'nantou' | 'other') => {
   personType.value = val;
   township.value = '';
-  duration.value = '';
 };
 
 const cardSubLabel = computed(() => {
   if (personType.value === 'other') return '我是南投之友';
-  switch (duration.value) {
-    case '1y':      return `我是${township.value}新人`;
-    case '5y':      return `我是${township.value}熟面孔`;
-    case 'over10y': return `我是${township.value}資深老朋友`;
-    case 'forever': return `我是${township.value}在地人`;
-    default:        return '';
-  }
+  return township.value ? `我是${township.value}在地人` : '';
 });
 
 const canSubmitForm = computed(() => {
   if (!nickname.value.trim()) return false;
   if (isNantou.value && !township.value) return false;
-  if (isNantou.value && !duration.value) return false;
   return agreedToTerms.value;
 });
 
@@ -89,13 +79,11 @@ const confirmCard = () => { step.value = 'done'; };
       :nickname="nickname"
       :person-type="personType"
       :township="township"
-      :duration="duration"
       :agreed-to-terms="agreedToTerms"
       :can-submit="canSubmitForm"
       @update:nickname="nickname = $event"
       @update:person-type="onPersonTypeChange"
       @update:township="township = $event"
-      @update:duration="duration = $event"
       @update:agreed-to-terms="agreedToTerms = $event"
       @toggle-privacy="showPrivacyDetail = !showPrivacyDetail"
       @submit="goToPreview"

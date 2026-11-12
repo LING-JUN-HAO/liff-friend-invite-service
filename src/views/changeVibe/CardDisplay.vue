@@ -15,6 +15,7 @@ defineProps<{
     <div v-else class="card__avatar card__avatar--placeholder"></div>
     <p class="card__name">我是 {{ nickname }}</p>
     <p class="card__identity">{{ cardSubLabel }}</p>
+    <p class="card__slogan">一起成為改變南投的力量！</p>
   </div>
 </template>
 
@@ -80,5 +81,22 @@ defineProps<{
   color: #333;
   margin: 0;
   line-height: 1.3;
+}
+/* 第三格：蓋掉底圖原本的「# 一股改變南投的力量」，保留右側浮水印；模板量測中心 82.3% */
+.card__slogan {
+  position: absolute;
+  left: 21%;
+  right: 22.5%;
+  top: 79.6%;
+  height: 5.4%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  color: #0B5E4E;
+  margin: 0;
+  white-space: nowrap;
 }
 </style>
