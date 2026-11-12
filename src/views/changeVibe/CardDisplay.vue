@@ -15,7 +15,7 @@ defineProps<{
     <div v-else class="card__avatar card__avatar--placeholder"></div>
     <p class="card__name">我是 {{ nickname }}</p>
     <p class="card__identity">{{ cardSubLabel }}</p>
-    <p class="card__slogan">一起成為改變南投的力量！</p>
+    <p class="card__slogan">一起成為改變南投的力量</p>
   </div>
 </template>
 
