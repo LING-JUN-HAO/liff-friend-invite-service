@@ -122,7 +122,7 @@ const inviteFriends = async () => {
   try {
     const inviteText = {
       type: 'text',
-      text: `我剛做了我的「政波卡」！\n\n邀請你也一起來製作政波卡，讓希望擴散成波！\n\n#一股改變南投的力量`,
+      text: `我剛做了我的「政波卡」！\n\n邀請你也一起來製作政波卡，讓希望擴散成波！\n\n一起成為改變南投的力量！`,
     };
     const result = await liff.shareTargetPicker([inviteText, buildInviteCard()] as any);
     if (result?.status === 'success') {
