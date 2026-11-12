@@ -1,13 +1,4 @@
 <script setup lang="ts">
-type Duration = '1y' | '5y' | 'over10y' | 'forever'
-
-const DURATION_OPTIONS = [
-  { value: '1y',      label: '一年內'    },
-  { value: '5y',      label: '5 年內'    },
-  { value: 'over10y', label: '10 年以上' },
-  { value: 'forever', label: '一輩子'   },
-] as const satisfies { value: Duration; label: string }[]
-
 const NANTOU_TOWNSHIPS = [
   '南投市', '埔里鎮', '草屯鎮', '竹山鎮', '集集鎮',
   '名間鄉', '中寮鄉', '鹿谷鄉', '水里鄉', '魚池鄉',
@@ -19,7 +10,6 @@ defineProps<{
   nickname: string;
   personType: 'nantou' | 'other';
   township: string;
-  duration: Duration | '';
   agreedToTerms: boolean;
   canSubmit: boolean;
 }>();
@@ -28,7 +18,6 @@ const emit = defineEmits<{
   'update:nickname': [value: string];
   'update:personType': [value: 'nantou' | 'other'];
   'update:township': [value: string];
-  'update:duration': [value: Duration];
   'update:agreedToTerms': [value: boolean];
   'toggle-privacy': [];
   'submit': [];
@@ -96,20 +85,6 @@ const emit = defineEmits<{
           <option value="" disabled>選擇鄉鎮市</option>
           <option v-for="t in NANTOU_TOWNSHIPS" :key="t" :value="t">{{ t }}</option>
         </select>
-      </div>
-
-      <!-- 年資（南投人限定） -->
-      <div v-if="personType === 'nantou'" class="field">
-        <label class="field__label">您在南投生活多久了呢？</label>
-        <div class="duration-group">
-          <button
-            v-for="{ value, label } in DURATION_OPTIONS"
-            :key="value"
-            class="duration-btn"
-            :class="{ 'duration-btn--active': duration === value }"
-            @click="emit('update:duration', value)"
-          >{{ label }}</button>
-        </div>
       </div>
 
       <!-- 隱私同意 -->
@@ -255,30 +230,6 @@ const emit = defineEmits<{
 }
 .other-notice p { margin: 0; font-size: 16px; color: #2b2b2b; line-height: 1.6; }
 
-/* 年資選擇 */
-.duration-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.duration-btn {
-  flex: 0 0 auto;
-  padding: 10px 18px;
-  border: 1.5px solid #d5d9de;
-  border-radius: 999px;
-  background: #fff;
-  font-size: 15px;
-  font-weight: 400;
-  color: #aaa;
-  cursor: pointer;
-  transition: all .15s;
-}
-.duration-btn--active {
-  border-color: #06C755;
-  background: #e8fbf0;
-  color: #06C755;
-  font-weight: 700;
-}
 
 /* Checkbox */
 .checkbox-label {
