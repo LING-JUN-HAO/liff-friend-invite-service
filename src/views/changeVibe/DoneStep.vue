@@ -151,7 +151,7 @@ const inviteFriends = async () => {
     <img v-if="cardImageUrl" :src="cardImageUrl" class="card-preview" alt="政波卡" />
     <div v-else class="card-placeholder" />
 
-    <p class="hint-text">傳出去，讓希望擴散成波🌊<br/>長按圖片可以直接儲存政波卡</p>
+    <p class="hint-text">傳出去，讓希望擴散成波🌊<br/><strong class="hint-text__em">長按圖片</strong>可以直接儲存政波卡</p>
 
     <div class="btn-group">
       <button class="btn btn--green" @click="inviteFriends">分享給朋友</button>
@@ -197,6 +197,10 @@ const inviteFriends = async () => {
   margin-top: auto;
   margin-bottom: 16px;
   padding-top: 16px;
+}
+.hint-text__em {
+  color: #0B5E4E;
+  font-weight: 700;
 }
 .btn-group {
   display: flex;
