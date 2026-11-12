@@ -5,7 +5,8 @@ import liff from '@line/liff';
  * 結構完全自由，要加就把一段 flex 貼進來、給一個 key。
  * 用法：import { share } from '../utils/share'; 然後 share('moongame')
  */
-const officialAccountUrl = 'https://line.me/R/ti/p/%40723znbzn';
+// 官方帳號加好友連結，Basic ID（含 @）由環境變數 VITE_OA_BASIC_ID 提供
+const officialAccountUrl = `https://line.me/R/ti/p/${encodeURIComponent(import.meta.env.VITE_OA_BASIC_ID)}`;
 
 
 export const SHARES = {
