@@ -15,7 +15,7 @@ const LIFF_URL = 'https://liff.line.me/2011622081-De9SToPC#changevibe';
 
 const buildInviteCard = () => ({
   type: 'flex',
-  altText: '加入 #一股改變南投的力量',
+  altText: '一起成為改變南投的力量！',
   contents: {
     type: 'bubble',
     size: 'giga',
