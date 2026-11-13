@@ -82,6 +82,8 @@ const buildInviteCard = () => ({
 
 
 const cardImageUrl = ref('');
+// 預先轉好的圖檔：按下按鈕時直接呼叫系統分享，避免 await 轉檔讓 iOS 判定不是使用者觸發
+const cardFile = ref<File | null>(null);
 
 // 依螢幕像素比輸出，避免高解析度手機上卡片被放大而模糊；上限 3 以免圖檔過大
 const captureOptions = {
@@ -106,6 +108,9 @@ onMounted(async () => {
     const { default: html2canvas } = await import('html2canvas');
     const canvas = await html2canvas(el, captureOptions);
     cardImageUrl.value = canvas.toDataURL('image/png');
+    canvas.toBlob(blob => {
+      if (blob) cardFile.value = new File([blob], '政波卡.png', { type: 'image/png' });
+    }, 'image/png');
   } catch (e) { console.error('卡片預覽產生失敗', e); }
 });
 
@@ -118,11 +123,37 @@ const showToast = (msg: string) => {
   toastTimer = setTimeout(() => { toastMessage.value = ''; }, 2500);
 };
 
+const INVITE_TEXT = `我剛做了我的「政波卡」\n\n邀請你也一起來製作政波卡，讓希望擴散成波！\n\n一起成為改變南投的力量！`;
+
+// 分享圖片到 FB 等 App：用系統分享選單帶入政波卡圖檔。
+// FB 不接受預填文字，所以先把文案複製到剪貼簿，讓使用者在貼文裡貼上。
+const shareCardImage = async () => {
+  const file = cardFile.value;
+  if (!file) {
+    showToast('政波卡還在產生中，請稍候再試');
+    return;
+  }
+  if (!navigator.canShare?.({ files: [file] })) {
+    showToast('這個瀏覽器不支援直接分享圖片\n請長按圖片儲存後，到 FB 發文上傳');
+    return;
+  }
+  // 不 await，讓 navigator.share 仍在點擊的當下呼叫
+  const copied = navigator.clipboard?.writeText(`${INVITE_TEXT}\n${LIFF_URL}`).then(() => true, () => false);
+  try {
+    await navigator.share({ files: [file] });
+    if (await copied) showToast('文案已複製，發文時可直接貼上');
+  } catch (e) {
+    if ((e as DOMException)?.name === 'AbortError') return; // 使用者自己取消
+    showToast('分享失敗，請長按圖片儲存後到 FB 發文上傳');
+    console.error(e);
+  }
+};
+
 const inviteFriends = async () => {
   try {
     const inviteText = {
       type: 'text',
-      text: `我剛做了我的「政波卡」\n\n邀請你也一起來製作政波卡，讓希望擴散成波！\n\n一起成為改變南投的力量！`,
+      text: INVITE_TEXT,
     };
     const result = await liff.shareTargetPicker([inviteText, buildInviteCard()] as any);
     if (result?.status === 'success') {
@@ -155,6 +186,7 @@ const inviteFriends = async () => {
 
     <div class="btn-group">
       <button class="btn btn--green" @click="inviteFriends">分享給朋友</button>
+      <button class="btn btn--fb" @click="shareCardImage">分享圖片到 FB</button>
     </div>
 
     <Transition name="toast">
@@ -220,6 +252,7 @@ const inviteFriends = async () => {
   margin-top: 12px;
 }
 .btn--green { background: #06C755; color: #fff; }
+.btn--fb { background: #1877F2; color: #fff; }
 
 .toast {
   position: fixed;
