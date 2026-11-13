@@ -157,7 +157,7 @@ const inviteFriends = async () => {
 
     <div class="btn-group">
       <button class="btn btn--green" @click="inviteFriends">分享給朋友</button>
-      <button class="btn btn--fb" @click="shareCardImage">分享圖片到 FB</button>
+      <button class="btn btn--fb" @click="shareCardImage">分享圖片到其他社群</button>
     </div>
 
     <Transition name="toast">

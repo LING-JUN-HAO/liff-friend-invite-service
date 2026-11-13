@@ -62,7 +62,7 @@ const onShare = async () => {
 
     <div class="btn-group">
       <button class="btn btn--fb" :disabled="!cardFile" @click="onShare">
-        {{ cardFile ? '分享圖片到 FB' : '政波卡產生中…' }}
+        {{ cardFile ? '分享圖片到其他社群' : '政波卡產生中…' }}
       </button>
     </div>
 
