@@ -2,6 +2,7 @@
 import { onMounted, ref } from 'vue';
 import liff from '@line/liff';
 import CardDisplay from './CardDisplay.vue';
+import { INVITE_TEXT, LIFF_URL, buildFbShareUrl, canShareImage, captureCard, shareImage } from '../../utils/cardImage';
 
 const props = defineProps<{
   avatarUrl: string;
@@ -11,7 +12,6 @@ const props = defineProps<{
 
 
 const HERO_IMAGE_URL = 'https://res.cloudinary.com/dj4rwmdiu/image/upload/v1794013731/%E8%81%8A%E5%A4%A9%E5%AE%A4_jbs2jz.png';
-const LIFF_URL = `https://liff.line.me/${import.meta.env.VITE_LIFF_ID}#changevibe`;
 
 const buildInviteCard = () => ({
   type: 'flex',
@@ -85,32 +85,13 @@ const cardImageUrl = ref('');
 // 預先轉好的圖檔：按下按鈕時直接呼叫系統分享，避免 await 轉檔讓 iOS 判定不是使用者觸發
 const cardFile = ref<File | null>(null);
 
-// 依螢幕像素比輸出，避免高解析度手機上卡片被放大而模糊；上限 3 以免圖檔過大
-const captureOptions = {
-  useCORS: true,
-  scale: Math.min(Math.max(window.devicePixelRatio || 1, 2), 3),
-  backgroundColor: null,
-};
-
 onMounted(async () => {
   const el = document.getElementById('card-capture');
   if (!el) return;
-  // 等卡片內所有圖片（背景圖、頭貼）載入完成再截圖
-  const images = Array.from(el.querySelectorAll('img'));
-  await Promise.all(
-    images.map(img =>
-      img.complete
-        ? Promise.resolve()
-        : new Promise<void>(resolve => { img.onload = () => resolve(); img.onerror = () => resolve(); })
-    )
-  );
   try {
-    const { default: html2canvas } = await import('html2canvas');
-    const canvas = await html2canvas(el, captureOptions);
-    cardImageUrl.value = canvas.toDataURL('image/png');
-    canvas.toBlob(blob => {
-      if (blob) cardFile.value = new File([blob], '政波卡.png', { type: 'image/png' });
-    }, 'image/png');
+    const { dataUrl, file } = await captureCard(el);
+    cardImageUrl.value = dataUrl;
+    cardFile.value = file;
   } catch (e) { console.error('卡片預覽產生失敗', e); }
 });
 
@@ -123,30 +104,20 @@ const showToast = (msg: string) => {
   toastTimer = setTimeout(() => { toastMessage.value = ''; }, 2500);
 };
 
-const INVITE_TEXT = `我剛做了我的「政波卡」\n\n邀請你也一起來製作政波卡，讓希望擴散成波！\n\n一起成為改變南投的力量！`;
-
-// 分享圖片到 FB 等 App：用系統分享選單帶入政波卡圖檔。
-// FB 不接受預填文字，所以先把文案複製到剪貼簿，讓使用者在貼文裡貼上。
+// 分享圖片到 FB：瀏覽器支援就直接跳系統分享選單；
+// LINE 內建瀏覽器不支援分享圖檔，改開外部瀏覽器的分享頁（在那邊重新產生政波卡再分享）
 const shareCardImage = async () => {
   const file = cardFile.value;
-  if (!file) {
-    showToast('政波卡還在產生中，請稍候再試');
+  if (canShareImage(file)) {
+    const { result, copied } = await shareImage(file);
+    if (result === 'shared' && copied) showToast('文案已複製，發文時可直接貼上');
+    if (result === 'failed') showToast('分享失敗，請長按圖片儲存後到 FB 發文上傳');
     return;
   }
-  if (!navigator.canShare?.({ files: [file] })) {
-    showToast('這個瀏覽器不支援直接分享圖片\n請長按圖片儲存後，到 FB 發文上傳');
-    return;
-  }
-  // 不 await，讓 navigator.share 仍在點擊的當下呼叫
-  const copied = navigator.clipboard?.writeText(`${INVITE_TEXT}\n${LIFF_URL}`).then(() => true, () => false);
-  try {
-    await navigator.share({ files: [file] });
-    if (await copied) showToast('文案已複製，發文時可直接貼上');
-  } catch (e) {
-    if ((e as DOMException)?.name === 'AbortError') return; // 使用者自己取消
-    showToast('分享失敗，請長按圖片儲存後到 FB 發文上傳');
-    console.error(e);
-  }
+  liff.openWindow({
+    url: buildFbShareUrl({ avatarUrl: props.avatarUrl, nickname: props.nickname, cardSubLabel: props.cardSubLabel }),
+    external: true,
+  });
 };
 
 const inviteFriends = async () => {
