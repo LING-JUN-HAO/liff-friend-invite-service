@@ -223,7 +223,7 @@ const inviteFriends = async () => {
   margin-top: 12px;
 }
 .btn--green { background: #06C755; color: #fff; }
-.btn--social { background: #1877F2; color: #fff; }
+.btn--social { background: #01655B; color: #fff; }
 
 .toast {
   position: fixed;

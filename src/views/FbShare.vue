@@ -128,7 +128,7 @@ const onShare = async () => {
   margin-top: 12px;
 }
 .btn:disabled { opacity: .6; cursor: default; }
-.btn--social { background: #1877F2; color: #fff; }
+.btn--social { background: #01655B; color: #fff; }
 .toast {
   position: fixed;
   bottom: 32px;
