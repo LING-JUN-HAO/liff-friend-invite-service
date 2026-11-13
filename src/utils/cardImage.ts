@@ -1,4 +1,4 @@
-// 政波卡圖片：截圖產生、分享圖片到 FB 等 App 的共用邏輯
+// 政波卡圖片：截圖產生、分享圖片到其他社群 的共用邏輯
 
 export const INVITE_TEXT = `我剛做了我的「政波卡」\n\n邀請你也一起來製作政波卡，讓希望擴散成波！\n\n一起成為改變南投的力量！`;
 export const LIFF_URL = `https://liff.line.me/${import.meta.env.VITE_LIFF_ID}#changevibe`;

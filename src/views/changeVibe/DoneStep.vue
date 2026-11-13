@@ -104,14 +104,14 @@ const showToast = (msg: string) => {
   toastTimer = setTimeout(() => { toastMessage.value = ''; }, 2500);
 };
 
-// 分享圖片到 FB：瀏覽器支援就直接跳系統分享選單；
+// 分享圖片到其他社群：瀏覽器支援就直接跳系統分享選單；
 // LINE 內建瀏覽器不支援分享圖檔，改開外部瀏覽器的分享頁（在那邊重新產生政波卡再分享）
 const shareCardImage = async () => {
   const file = cardFile.value;
   if (canShareImage(file)) {
     const { result, copied } = await shareImage(file);
     if (result === 'shared' && copied) showToast('文案已複製，發文時可直接貼上');
-    if (result === 'failed') showToast('分享失敗，請長按圖片儲存後到 FB 發文上傳');
+    if (result === 'failed') showToast('分享失敗，請長按圖片儲存後到社群發文上傳');
     return;
   }
   liff.openWindow({
@@ -157,7 +157,7 @@ const inviteFriends = async () => {
 
     <div class="btn-group">
       <button class="btn btn--green" @click="inviteFriends">分享給朋友</button>
-      <button class="btn btn--fb" @click="shareCardImage">分享圖片到其他社群</button>
+      <button class="btn btn--social" @click="shareCardImage">分享圖片到其他社群</button>
     </div>
 
     <Transition name="toast">
@@ -223,7 +223,7 @@ const inviteFriends = async () => {
   margin-top: 12px;
 }
 .btn--green { background: #06C755; color: #fff; }
-.btn--fb { background: #1877F2; color: #fff; }
+.btn--social { background: #01655B; color: #fff; }
 
 .toast {
   position: fixed;

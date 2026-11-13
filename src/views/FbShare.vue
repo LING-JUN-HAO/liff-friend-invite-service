@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // 外部瀏覽器的政波卡分享頁：LINE 內建瀏覽器不支援分享圖檔，
-// 從 LINE 跳到這頁後，用網址帶來的資料重新產生政波卡，再交給系統分享選單（可選 Facebook）
+// 從 LINE 跳到這頁後，用網址帶來的資料重新產生政波卡，再交給系統分享選單（可選 FB、IG 等社群）
 import { onMounted, ref } from 'vue';
 import CardDisplay from './changeVibe/CardDisplay.vue';
 import { canShareImage, captureCard, shareImage } from '../utils/cardImage';
@@ -37,12 +37,12 @@ const showToast = (msg: string) => {
 const onShare = async () => {
   const file = cardFile.value;
   if (!canShareImage(file)) {
-    showToast('這個瀏覽器不支援直接分享圖片\n請長按圖片儲存後，到 FB 發文上傳');
+    showToast('這個瀏覽器不支援直接分享圖片\n請長按圖片儲存後，到社群發文上傳');
     return;
   }
   const { result, copied } = await shareImage(file);
   if (result === 'shared' && copied) showToast('文案已複製，發文時可直接貼上');
-  if (result === 'failed') showToast('分享失敗，請長按圖片儲存後到 FB 發文上傳');
+  if (result === 'failed') showToast('分享失敗，請長按圖片儲存後到社群發文上傳');
 };
 </script>
 
@@ -56,12 +56,12 @@ const onShare = async () => {
     <div v-else class="card-placeholder" />
 
     <p class="hint-text">
-      <template v-if="supported">按下按鈕選擇 <strong class="hint-text__em">Facebook</strong><br/>文案會自動複製，發文時貼上即可</template>
-      <template v-else><strong class="hint-text__em">長按圖片</strong>儲存政波卡<br/>再到 FB 發文上傳</template>
+      <template v-if="supported">按下按鈕選擇<strong class="hint-text__em">要分享的社群</strong><br/>文案會自動複製，發文時貼上即可</template>
+      <template v-else><strong class="hint-text__em">長按圖片</strong>儲存政波卡<br/>再到社群發文上傳</template>
     </p>
 
     <div class="btn-group">
-      <button class="btn btn--fb" :disabled="!cardFile" @click="onShare">
+      <button class="btn btn--social" :disabled="!cardFile" @click="onShare">
         {{ cardFile ? '分享圖片到其他社群' : '政波卡產生中…' }}
       </button>
     </div>
@@ -128,7 +128,7 @@ const onShare = async () => {
   margin-top: 12px;
 }
 .btn:disabled { opacity: .6; cursor: default; }
-.btn--fb { background: #1877F2; color: #fff; }
+.btn--social { background: #01655B; color: #fff; }
 .toast {
   position: fixed;
   bottom: 32px;
