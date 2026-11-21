@@ -2,7 +2,8 @@
 import { onMounted, ref } from 'vue';
 import liff from '@line/liff';
 import CardDisplay from './CardDisplay.vue';
-import { INVITE_TEXT, LIFF_URL, buildFbShareUrl, canShareImage, captureCard, shareImage } from '../../utils/cardImage';
+import { buildFbShareUrl, canShareImage, captureCard, shareImage } from '../../utils/cardImage';
+import { shareChangeVibeInvite } from '../../utils/share';
 
 const props = defineProps<{
   avatarUrl: string;
@@ -11,74 +12,6 @@ const props = defineProps<{
 }>();
 
 
-const HERO_IMAGE_URL = 'https://res.cloudinary.com/dj4rwmdiu/image/upload/v1794013731/%E8%81%8A%E5%A4%A9%E5%AE%A4_jbs2jz.png';
-
-const buildInviteCard = () => ({
-  type: 'flex',
-  altText: '一起成為改變南投的力量',
-  contents: {
-    type: 'bubble',
-    size: 'giga',
-    hero: {
-      type: 'image',
-      url: HERO_IMAGE_URL,
-      size: 'full',
-      aspectRatio: '20:9',
-      aspectMode: 'cover',
-      action: { type: 'uri', label: '加入政波', uri: LIFF_URL },
-    },
-    body: {
-      type: 'box',
-      layout: 'vertical',
-      paddingAll: 'none',
-      contents: [{
-        type: 'box',
-        layout: 'vertical',
-        paddingTop: '24px',
-        paddingStart: '20px',
-        paddingEnd: '20px',
-        paddingBottom: '20px',
-        spacing: 'xl',
-        contents: [
-          {
-            type: 'text',
-            text: '一起成為改變南投的力量',
-            weight: 'bold',
-            size: '20px',
-            color: '#222222',
-            wrap: true,
-          },
-          {
-            type: 'text',
-            text: '輸入暱稱、選擇你和南投的關係，馬上完成專屬於你的政波卡。',
-            wrap: true,
-            size: '18px',
-            color: '#555555',
-          },
-          {
-            type: 'box',
-            layout: 'vertical',
-            height: '50px',
-            backgroundColor: '#01655B',
-            cornerRadius: '999px',
-            justifyContent: 'center',
-            alignItems: 'center',
-            margin: 'xl',
-            action: { type: 'uri', label: '加入政波', uri: LIFF_URL },
-            contents: [{
-              type: 'text',
-              text: '加入政波',
-              color: '#FFFFFF',
-              weight: 'bold',
-              size: '18px',
-              align: 'center',
-            }],
-          },
-        ],
-      }],
-    },
-  },
-});
 
 
 const cardImageUrl = ref('');
@@ -122,14 +55,8 @@ const shareCardImage = async () => {
 
 const inviteFriends = async () => {
   try {
-    const inviteText = {
-      type: 'text',
-      text: INVITE_TEXT,
-    };
-    const result = await liff.shareTargetPicker([inviteText, buildInviteCard()] as any);
-    if (result?.status === 'success') {
-      showToast('已成功分享給朋友！');
-    }
+    const result = await shareChangeVibeInvite();
+    if (result?.status === 'success') showToast('已成功分享給朋友！');
   } catch (e) {
     showToast(`分享失敗：${String(e)}`);
     console.error(e);

@@ -42,7 +42,9 @@ onMounted(async () => {
       }
       nickname.value = name;
     }
-  } catch {}
+  } catch (e) {
+    console.error('取得 LINE 個人資料失敗', e);
+  }
 });
 
 const isNantou = computed(() => personType.value === 'nantou');

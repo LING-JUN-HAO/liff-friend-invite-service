@@ -1,4 +1,5 @@
 import liff from '@line/liff';
+import { INVITE_TEXT, LIFF_URL } from './cardImage';
 
 /**
  * 分享設定表：一種分享 = 一組（可多張）原始 flex message。
@@ -148,6 +149,85 @@ export const share = async (key: keyof typeof SHARES) => {
     liff.closeWindow();
   }
   return result;
+};
+
+// ── 政波卡 ──────────────────────────────────────────────────
+
+const CHANGEVIBE_HERO_IMG_URL = 'https://res.cloudinary.com/dj4rwmdiu/image/upload/v1794013731/%E8%81%8A%E5%A4%A9%E5%AE%A4_jbs2jz.png';
+
+/** 邀請朋友製作政波卡 */
+export const shareChangeVibeInvite = async () => {
+  const messages = [
+    { type: 'text', text: INVITE_TEXT },
+    {
+      type: 'flex',
+      altText: '一起成為改變南投的力量',
+      contents: {
+        type: 'bubble',
+        size: 'giga',
+        body: {
+          type: 'box',
+          layout: 'vertical',
+          paddingAll: 'none',
+          contents: [
+            {
+              type: 'image',
+              url: CHANGEVIBE_HERO_IMG_URL,
+              size: 'full',
+              aspectRatio: '20:9',
+              aspectMode: 'cover',
+            },
+            {
+              type: 'box',
+              layout: 'vertical',
+              paddingTop: '24px',
+              paddingStart: '20px',
+              paddingEnd: '20px',
+              paddingBottom: '20px',
+              spacing: 'xl',
+              contents: [
+                {
+                  type: 'text',
+                  text: '一起成為改變南投的力量',
+                  weight: 'bold',
+                  size: '20px',
+                  color: '#222222',
+                  wrap: true,
+                },
+                {
+                  type: 'text',
+                  text: '輸入暱稱、選擇你和南投的關係，馬上完成專屬於你的政波卡。',
+                  wrap: true,
+                  size: '18px',
+                  color: '#555555',
+                },
+                {
+                  type: 'box',
+                  layout: 'vertical',
+                  height: '50px',
+                  backgroundColor: '#01655B',
+                  cornerRadius: '999px',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  margin: 'xl',
+                  action: { type: 'uri', label: '加入政波', uri: officialAccountUrl },
+                  contents: [{
+                    type: 'text',
+                    text: '加入政波',
+                    color: '#FFFFFF',
+                    weight: 'bold',
+                    size: '18px',
+                    align: 'center',
+                  }],
+                },
+              ],
+            },
+          ],
+        },
+      },
+    },
+  ];
+  return liff.shareTargetPicker(messages as any);
 };
 
 // ── 投票提醒邀請卡 ──────────────────────────────────────────
