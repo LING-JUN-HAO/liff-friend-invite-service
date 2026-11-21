@@ -48,11 +48,14 @@ export const preloadCardAssets = (imageUrls: string[]) => {
  * 先把要畫的字所需的網路字型載下來（Google Fonts 依字元切檔，只載用得到的部分），
  * 否則 canvas 會用備用字型畫。最多等 1.5 秒，不讓字型卡住整個流程。
  */
-export const waitFonts = (specs: { font: string; text: string }[]) => {
+export const waitFonts = (specs: { font: string; text: string }[]): Promise<'loaded' | 'timeout' | 'unsupported'> => {
   const fonts = document.fonts;
-  if (!fonts?.load) return Promise.resolve();
+  if (!fonts?.load) return Promise.resolve('unsupported');
   const loading = Promise.all(specs.map(s => fonts.load(s.font, s.text || ' ').catch(() => undefined)));
-  return Promise.race([loading.then(() => undefined), new Promise<void>(resolve => setTimeout(resolve, 1500))]);
+  return Promise.race([
+    loading.then(() => 'loaded' as const),
+    new Promise<'timeout'>(resolve => setTimeout(() => resolve('timeout'), 1500)),
+  ]);
 };
 
 // ── CSS 長度 ────────────────────────────────────────

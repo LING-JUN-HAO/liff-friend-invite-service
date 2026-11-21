@@ -3,6 +3,7 @@ import { onMounted } from 'vue';
 import CardDisplay from './CardDisplay.vue';
 import { cardCaptureKey, renderVoteCard } from './drawCard';
 import { renderCardCached } from '../../utils/cardImage';
+import { perfMark } from '../../utils/perfLog';
 
 const props = defineProps<{
   person: string;
@@ -16,6 +17,7 @@ defineEmits<{
 
 // 使用者看預覽時就在背景先產生圖片，按下產生邀請卡後完成頁可以直接顯示
 onMounted(() => {
+  perfMark('預覽頁顯示');
   const el = document.getElementById('vote-card-capture');
   if (el) renderCardCached(cardCaptureKey(props), el.offsetWidth, renderVoteCard({ ...props })).catch(() => undefined);
 });

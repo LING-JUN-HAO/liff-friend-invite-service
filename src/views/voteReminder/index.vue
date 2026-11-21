@@ -6,6 +6,7 @@ import PreviewStep from './PreviewStep.vue';
 import DoneStep from './DoneStep.vue';
 import { IMG_URL } from './drawCard';
 import { preloadCardAssets } from '../../utils/cardCanvas';
+import { perfMark } from '../../utils/perfLog';
 
 type Step = 'step1' | 'step2' | 'preview' | 'done';
 
@@ -41,7 +42,7 @@ const onStep2Submit = (data: CardData) => {
   step.value = 'preview';
 };
 
-const onConfirm = () => { step.value = 'done'; };
+const onConfirm = () => { perfMark('按下產生邀請卡'); step.value = 'done'; };
 const backToStep1 = () => { step.value = 'step1'; };
 const backToStep2 = () => { step.value = 'step2'; };
 </script>
