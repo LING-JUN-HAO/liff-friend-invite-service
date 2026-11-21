@@ -16,18 +16,22 @@ const blobToDataUrl = (blob: Blob) =>
     reader.readAsDataURL(blob);
   });
 
-/** 把畫好的 canvas 轉成預覽用 dataURL 與分享用 File；PNG 只編碼一次，dataURL 由同一份 Blob 讀出 */
+// 用 JPEG 輸出：入門 Android 手機實測 PNG 編碼要 4～5 秒，JPEG 快很多、檔案也小很多
+const IMAGE_TYPE = 'image/jpeg';
+const IMAGE_QUALITY = 0.92;
+
+/** 把畫好的 canvas 轉成預覽用 dataURL 與分享用 File；只編碼一次，dataURL 由同一份 Blob 讀出 */
 export const canvasToCapture = async (canvas: HTMLCanvasElement, fileName: string, partial = false): Promise<CardCapture> => {
-  const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, 'image/png'));
-  perfMark(`PNG 編碼完成 ${blob ? Math.round(blob.size / 1024) : '?'}KB`);
-  if (!blob) return { dataUrl: canvas.toDataURL('image/png'), file: null, partial };
+  const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, IMAGE_TYPE, IMAGE_QUALITY));
+  perfMark(`JPEG 編碼完成 ${blob ? Math.round(blob.size / 1024) : '?'}KB`);
+  if (!blob) return { dataUrl: canvas.toDataURL(IMAGE_TYPE, IMAGE_QUALITY), file: null, partial };
   const dataUrl = await blobToDataUrl(blob);
   perfMark('dataURL 完成');
-  return { dataUrl, file: new File([blob], fileName, { type: 'image/png' }), partial };
+  return { dataUrl, file: new File([blob], fileName, { type: IMAGE_TYPE }), partial };
 };
 
 // 最近一張卡的產圖結果：預覽頁先在背景產生、完成頁直接取用。
-// 只留一筆，避免反覆返回修改時累積多張高解析度 PNG 佔用記憶體
+// 只留一筆，避免反覆返回修改時累積多張高解析度圖片佔用記憶體
 let captureCache: { key: string; task: Promise<CardCapture> } | null = null;
 
 /**

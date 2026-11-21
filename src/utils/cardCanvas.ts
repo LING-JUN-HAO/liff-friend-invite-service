@@ -3,8 +3,8 @@
 
 export const CARD_FONT_FAMILY = `'Noto Sans TC', system-ui, sans-serif`;
 
-// 依螢幕像素比輸出，避免高解析度手機上卡片被放大而模糊；上限 3 以免圖檔過大
-export const canvasScale = () => Math.min(Math.max(window.devicePixelRatio || 1, 2), 3);
+// 固定輸出 2 倍：分享與存圖都夠清楚；再高的話，入門手機的圖片編碼會多花好幾秒
+export const canvasScale = () => 2;
 
 // ── 圖片 ─────────────────────────────────────────────
 
@@ -14,7 +14,7 @@ const IMAGE_TIMEOUT_MS = 8000;
 const imageCache = new Map<string, Promise<HTMLImageElement | null>>();
 
 /**
- * 以 CORS 模式載入圖片（畫進 canvas 後才能輸出 PNG）；同一網址只載一次。
+ * 以 CORS 模式載入圖片（畫進 canvas 後才能輸出圖片）；同一網址只載一次。
  * 載入失敗回傳 null，由呼叫端決定要畫替代圖形。
  */
 export const loadImage = (url: string): Promise<HTMLImageElement | null> => {
@@ -80,6 +80,9 @@ export const createCanvas = (width: number, height: number) => {
   const ctx = canvas.getContext('2d');
   if (!ctx) throw new Error('無法建立 canvas');
   ctx.scale(scale, scale);
+  // 輸出是 JPEG（不支援透明），圓角外先填白色，跟頁面背景一致
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, width, height);
   return { canvas, ctx };
 };
 
