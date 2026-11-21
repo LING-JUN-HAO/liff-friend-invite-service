@@ -232,7 +232,8 @@ export const shareChangeVibeInvite = async () => {
 
 // ── 投票提醒邀請卡 ──────────────────────────────────────────
 
-const INVITE_CARD_IMG_URL = 'https://res.cloudinary.com/dj4rwmdiu/image/upload/v1795237354/%E6%8A%95%E7%A5%A8%E6%8F%90%E9%86%92_%E5%9C%96%E5%8D%A1_ri7yqp.png';
+// 原圖最底下一列像素是透明的，在 Flex 白底上會露出一條白線：用 c_crop 裁掉，並轉成壓縮過的 JPEG（1.1MB → 約 90KB）
+const INVITE_CARD_IMG_URL = 'https://res.cloudinary.com/dj4rwmdiu/image/upload/c_crop,g_north,w_822,h_1079/q_auto/v1795237354/%E6%8A%95%E7%A5%A8%E6%8F%90%E9%86%92_%E5%9C%96%E5%8D%A1_ri7yqp.jpg';
 const COVER_IMG_URL = 'https://res.cloudinary.com/dj4rwmdiu/image/upload/v1795237356/%E6%8A%95%E7%A5%A8%E6%8F%90%E9%86%92_%E5%B0%81%E9%9D%A2_anw4kg.png';
 const VOTE_LIFF_URL = `https://liff.line.me/${import.meta.env.VITE_LIFF_ID}#votereminder`;
 
@@ -256,7 +257,7 @@ export const shareVoteInvitee = async (person: string, inviteText: string) => {
               url: INVITE_CARD_IMG_URL,
               size: 'full',
               aspectMode: 'cover',
-              aspectRatio: '3:4',
+              aspectRatio: '822:1079', // 裁掉底部一列後的實際尺寸
             },
             {
               type: 'box',
