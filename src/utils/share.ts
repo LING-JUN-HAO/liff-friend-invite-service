@@ -8,7 +8,6 @@ import liff from '@line/liff';
 // 官方帳號加好友連結，Basic ID（含 @）由環境變數 VITE_OA_BASIC_ID 提供
 const officialAccountUrl = `https://line.me/R/ti/p/${encodeURIComponent(import.meta.env.VITE_OA_BASIC_ID)}`;
 
-
 export const SHARES = {
   // 「分享給好友玩」：立刻開始尋寶的邀請卡（連到 /moongame）
   moongame: [
@@ -151,3 +150,143 @@ export const share = async (key: keyof typeof SHARES) => {
   return result;
 };
 
+// ── 投票提醒邀請卡 ──────────────────────────────────────────
+
+const INVITE_CARD_IMG_URL = 'https://res.cloudinary.com/dj4rwmdiu/image/upload/v1795237354/%E6%8A%95%E7%A5%A8%E6%8F%90%E9%86%92_%E5%9C%96%E5%8D%A1_ri7yqp.png';
+const COVER_IMG_URL = 'https://res.cloudinary.com/dj4rwmdiu/image/upload/v1795237356/%E6%8A%95%E7%A5%A8%E6%8F%90%E9%86%92_%E5%B0%81%E9%9D%A2_anw4kg.png';
+const VOTE_LIFF_URL = `https://liff.line.me/${import.meta.env.VITE_LIFF_ID}#votereminder`;
+
+/** 傳給邀請對象：Flex 文字疊在圖片上（position: absolute） */
+export const shareVoteInvitee = async (person: string, inviteText: string) => {
+  const messages = [
+    { type: 'text', text: `我做了邀請卡，約${person}投票日一起出門！` },
+    {
+      type: 'flex',
+      altText: `給${person}的投票邀請`,
+      contents: {
+        type: 'bubble',
+        size: 'giga',
+        body: {
+          type: 'box',
+          layout: 'vertical',
+          paddingAll: 'none',
+          contents: [
+            {
+              type: 'image',
+              url: INVITE_CARD_IMG_URL,
+              size: 'full',
+              aspectMode: 'cover',
+              aspectRatio: '3:4',
+            },
+            {
+              type: 'box',
+              layout: 'vertical',
+              position: 'absolute',
+              offsetTop: '8%',
+              offsetStart: '0px',
+              offsetEnd: '0px',
+              contents: [
+                {
+                  type: 'text',
+                  text: `給${person}的邀請`,
+                  weight: 'bold',
+                  size: '32px',
+                  color: '#2d4a1e',
+                  align: 'center',
+                },
+                {
+                  type: 'text',
+                  text: inviteText,
+                  wrap: true,
+                  size: '24px',
+                  weight: 'bold',
+                  color: '#1a1a1a',
+                  align: 'center',
+                  margin: 'md',
+                },
+              ],
+            },
+          ],
+        },
+      },
+    },
+  ];
+  return liff.shareTargetPicker(messages as any);
+};
+
+/** 邀請其他好友製作：分享製作入口給朋友 */
+export const shareVoteCreate = async (person: string) => {
+  const messages = [
+    {
+      type: 'text',
+      text: `我剛做了一張邀請卡，約了${person}投票日一起出門！\n\n邀請你也來做一張，約你最想約的人，讓這份心意傳出去！`,
+    },
+    {
+      type: 'flex',
+      altText: '一起製作投票提醒邀請卡',
+      contents: {
+        type: 'bubble',
+        size: 'giga',
+        body: {
+          type: 'box',
+          layout: 'vertical',
+          paddingAll: 'none',
+          contents: [
+            {
+              type: 'image',
+              url: COVER_IMG_URL,
+              size: 'full',
+              aspectMode: 'cover',
+              aspectRatio: '822:367',
+            },
+            {
+              type: 'box',
+              layout: 'vertical',
+              paddingTop: '20px',
+              paddingStart: '20px',
+              paddingEnd: '20px',
+              paddingBottom: '20px',
+              spacing: 'md',
+              contents: [
+                {
+                  type: 'text',
+                  text: '投票日，約你一起出門',
+                  weight: 'bold',
+                  size: '20px',
+                  color: '#1a1a1a',
+                },
+                {
+                  type: 'text',
+                  text: '想約哪位親友一起去投票？挑個你們的小約定，邀請卡就幫你準備好了，傳給他吧！',
+                  wrap: true,
+                  size: '17px',
+                  color: '#555555',
+                },
+                {
+                  type: 'box',
+                  layout: 'vertical',
+                  height: '50px',
+                  backgroundColor: '#01655B',
+                  cornerRadius: '999px',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  margin: 'xl',
+                  action: { type: 'uri', label: '開始製作', uri: officialAccountUrl },
+                  contents: [{
+                    type: 'text',
+                    text: '開始製作',
+                    color: '#FFFFFF',
+                    weight: 'bold',
+                    size: '18px',
+                    align: 'center',
+                  }],
+                },
+              ],
+            },
+          ],
+        },
+      },
+    },
+  ];
+  return liff.shareTargetPicker(messages as any);
+};

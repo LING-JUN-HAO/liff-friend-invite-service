@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
 import Step1Who from './Step1Who.vue';
 import Step2Activity from './Step2Activity.vue';
 import PreviewStep from './PreviewStep.vue';
@@ -15,16 +15,16 @@ type CardData = {
 const step = ref<Step>('step1');
 const cardData = ref<CardData>({ person: '', inviteText: '' });
 
-const stepTitles: Record<Step, string> = {
-  step1: '投票提醒',
-  step2: '投票提醒',
-  preview: '確認邀請卡',
-  done: '邀請卡完成！',
-};
+// const stepTitles: Record<Step, string> = {
+//   step1: '投票提醒',
+//   step2: '投票提醒',
+//   preview: '確認邀請卡',
+//   done: '邀請卡完成！',
+// };
 
-watch(step, (s) => {
-  document.title = stepTitles[s];
-}, { immediate: true });
+// watch(step, (s) => {
+//   document.title = stepTitles[s];
+// }, { immediate: true });
 
 const onStep1Submit = (person: string) => {
   cardData.value = { ...cardData.value, person };
