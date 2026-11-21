@@ -10,7 +10,8 @@ const props = defineProps<{
 }>();
 
 const LIFF_URL = `https://liff.line.me/${import.meta.env.VITE_LIFF_ID}#votereminder`;
-const CARD_IMG_URL = 'https://res.cloudinary.com/dj4rwmdiu/image/upload/v1795237356/%E6%8A%95%E7%A5%A8%E6%8F%90%E9%86%92_%E5%B0%81%E9%9D%A2_anw4kg.png';
+const INVITE_CARD_IMG_URL = 'https://res.cloudinary.com/dj4rwmdiu/image/upload/v1795237354/%E6%8A%95%E7%A5%A8%E6%8F%90%E9%86%92_%E5%9C%96%E5%8D%A1_ri7yqp.png';
+const COVER_IMG_URL = 'https://res.cloudinary.com/dj4rwmdiu/image/upload/v1795237356/%E6%8A%95%E7%A5%A8%E6%8F%90%E9%86%92_%E5%B0%81%E9%9D%A2_anw4kg.png';
 const CANDIDATE_URL = import.meta.env.VITE_CANDIDATE_URL || '';
 
 const cardImageUrl = ref('');
@@ -90,9 +91,9 @@ const buildInviteCard = () => ({
       contents: [
         {
           type: 'image',
-          url: CARD_IMG_URL,
+          url: INVITE_CARD_IMG_URL,
           size: 'full',
-          aspectMode: 'cover',
+          aspectMode: 'fit',
           aspectRatio: '20:13',
         },
         {
@@ -139,10 +140,10 @@ const buildCreateCard = () => ({
       contents: [
         {
           type: 'image',
-          url: CARD_IMG_URL,
+          url: COVER_IMG_URL,
           size: 'full',
           aspectMode: 'cover',
-          aspectRatio: '20:13',
+          aspectRatio: '822:367',
         },
         {
           type: 'box',
@@ -171,7 +172,7 @@ const buildCreateCard = () => ({
               type: 'box',
               layout: 'vertical',
               height: '50px',
-              backgroundColor: '#06C755',
+              backgroundColor: '#01655B',
               cornerRadius: '999px',
               justifyContent: 'center',
               alignItems: 'center',
