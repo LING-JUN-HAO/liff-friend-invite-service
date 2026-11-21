@@ -42,7 +42,11 @@ const shareToInvitee = async () => {
         type: 'text',
         text: `我做了邀請卡，約${props.person}投票日一起出門！`,
       },
-      buildInviteCard(),
+      {
+        type: 'image',
+        originalContentUrl: INVITE_CARD_IMG_URL,
+        previewImageUrl: INVITE_CARD_IMG_URL,
+      },
     ];
     const result = await liff.shareTargetPicker(messages as any);
     if (result?.status === 'success') {
@@ -77,54 +81,6 @@ const openCandidateUrl = () => {
   liff.openWindow({ url: CANDIDATE_URL, external: false });
 };
 
-/** 邀請卡 Flex：分享給被揪去投票的對象 */
-const buildInviteCard = () => ({
-  type: 'flex',
-  altText: `給${props.person}的投票邀請`,
-  contents: {
-    type: 'bubble',
-    size: 'giga',
-    body: {
-      type: 'box',
-      layout: 'vertical',
-      paddingAll: 'none',
-      contents: [
-        {
-          type: 'image',
-          url: INVITE_CARD_IMG_URL,
-          size: 'full',
-          aspectMode: 'fit',
-          aspectRatio: '20:13',
-        },
-        {
-          type: 'box',
-          layout: 'vertical',
-          paddingTop: '20px',
-          paddingStart: '20px',
-          paddingEnd: '20px',
-          paddingBottom: '20px',
-          spacing: 'md',
-          contents: [
-            {
-              type: 'text',
-              text: `給${props.person}的邀請`,
-              weight: 'bold',
-              size: '20px',
-              color: '#1a1a1a',
-            },
-            {
-              type: 'text',
-              text: props.inviteText,
-              wrap: true,
-              size: '16px',
-              color: '#444444',
-            },
-          ],
-        },
-      ],
-    },
-  },
-});
 
 /** 創建邀請 Flex：分享「開始製作」按鈕給其他朋友 */
 const buildCreateCard = () => ({
@@ -165,7 +121,7 @@ const buildCreateCard = () => ({
               type: 'text',
               text: '想邀請你的好友一起去嗎？有你想的到的小約定，邀請卡超容易準備好了，傳給他吧！',
               wrap: true,
-              size: '15px',
+              size: '17px',
               color: '#555555',
             },
             {
