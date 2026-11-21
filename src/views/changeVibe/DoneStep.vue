@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import liff from '@line/liff';
-import CardDisplay from './CardDisplay.vue';
-import { buildFbShareUrl, canShareImage, captureCard, shareImage } from '../../utils/cardImage';
+import CardDisplay, { cardCaptureKey } from './CardDisplay.vue';
+import { buildFbShareUrl, canShareImage, getCardCapture, shareImage } from '../../utils/cardImage';
 import { shareChangeVibeInvite } from '../../utils/share';
 
 const props = defineProps<{
@@ -10,9 +10,6 @@ const props = defineProps<{
   nickname: string;
   cardSubLabel: string;
 }>();
-
-
-
 
 const cardImageUrl = ref('');
 // 預先轉好的圖檔：按下按鈕時直接呼叫系統分享，避免 await 轉檔讓 iOS 判定不是使用者觸發
@@ -22,7 +19,7 @@ onMounted(async () => {
   const el = document.getElementById('card-capture');
   if (!el) return;
   try {
-    const { dataUrl, file } = await captureCard(el);
+    const { dataUrl, file } = await getCardCapture(cardCaptureKey(props), el);
     cardImageUrl.value = dataUrl;
     cardFile.value = file;
   } catch (e) { console.error('卡片預覽產生失敗', e); }
@@ -95,6 +92,7 @@ const inviteFriends = async () => {
 
 <style scoped>
 .stage {
+  position: relative;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -106,7 +104,8 @@ const inviteFriends = async () => {
   left: -9999px;
   top: 0;
   pointer-events: none;
-  width: calc(100vw - 40px);
+  /* 跟預覽頁卡片同寬（.stage 內容寬），預覽頁背景產生的截圖才能直接沿用 */
+  width: calc(100% - 40px);
 }
 .card-preview {
   width: 100%;

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import liff from '@line/liff';
-import CardDisplay from './CardDisplay.vue';
-import { captureCard } from '../../utils/cardImage';
+import CardDisplay, { cardCaptureKey } from './CardDisplay.vue';
+import { getCardCapture } from '../../utils/cardImage';
 import { shareVoteInvitee, shareVoteCreate } from '../../utils/share';
 
 const props = defineProps<{
@@ -18,7 +18,7 @@ onMounted(async () => {
   const el = document.getElementById('vote-card-capture');
   if (!el) return;
   try {
-    const { dataUrl } = await captureCard(el);
+    const { dataUrl } = await getCardCapture(cardCaptureKey(props), el);
     cardImageUrl.value = dataUrl;
   } catch (e) { console.error('卡片截圖失敗', e); }
 });
@@ -83,6 +83,7 @@ const openCandidateUrl = () => {
 
 <style scoped>
 .stage {
+  position: relative;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -94,7 +95,8 @@ const openCandidateUrl = () => {
   left: -9999px;
   top: 0;
   pointer-events: none;
-  width: calc(100vw - 40px);
+  /* 跟預覽頁卡片同寬（.stage 內容寬），預覽頁背景產生的截圖才能直接沿用 */
+  width: calc(100% - 40px);
 }
 .card-preview {
   width: 100%;

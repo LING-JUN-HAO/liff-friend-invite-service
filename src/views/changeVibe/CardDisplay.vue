@@ -1,5 +1,12 @@
+<script lang="ts">
+export const BG_URL = 'https://res.cloudinary.com/dj4rwmdiu/image/upload/v1794013736/%E6%94%BF%E6%B3%A2%E5%8D%A1_sr5fzy.png';
+
+/** 截圖快取的 key：包含所有會影響卡片畫面的資料 */
+export const cardCaptureKey = (card: { avatarUrl: string; nickname: string; cardSubLabel: string }) =>
+  JSON.stringify(['changevibe', card.avatarUrl, card.nickname, card.cardSubLabel]);
+</script>
+
 <script setup lang="ts">
-const BG_URL = 'https://res.cloudinary.com/dj4rwmdiu/image/upload/v1794013736/%E6%94%BF%E6%B3%A2%E5%8D%A1_sr5fzy.png';
 
 defineProps<{
   avatarUrl: string;

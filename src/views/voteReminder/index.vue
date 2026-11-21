@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import Step1Who from './Step1Who.vue';
 import Step2Activity from './Step2Activity.vue';
 import PreviewStep from './PreviewStep.vue';
 import DoneStep from './DoneStep.vue';
+import { IMG_URL } from './CardDisplay.vue';
+import { preloadCardAssets } from '../../utils/cardImage';
 
 type Step = 'step1' | 'step2' | 'preview' | 'done';
 
@@ -13,6 +15,9 @@ type CardData = {
 };
 
 const step = ref<Step>('step1');
+
+// 一進來就先下載卡片底圖與截圖套件，最後產生圖片不用再等網路
+onMounted(() => preloadCardAssets([IMG_URL]));
 const cardData = ref<CardData>({ person: '', inviteText: '' });
 
 // const stepTitles: Record<Step, string> = {

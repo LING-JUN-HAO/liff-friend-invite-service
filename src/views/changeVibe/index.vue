@@ -5,6 +5,8 @@ import PrivacyOverlay from './PrivacyOverlay.vue';
 import FormStep from './FormStep.vue';
 import PreviewStep from './PreviewStep.vue';
 import DoneStep from './DoneStep.vue';
+import { BG_URL } from './CardDisplay.vue';
+import { preloadCardAssets } from '../../utils/cardImage';
 
 type Step = 'form' | 'preview' | 'done';
 const step = ref<Step>('form');
@@ -29,10 +31,13 @@ watch(step, (s) => {
 }, { immediate: true });
 
 onMounted(async () => {
+  // 填表時就先下載卡片底圖與截圖套件，最後產生圖片不用再等網路
+  preloadCardAssets([BG_URL]);
   if (import.meta.env.DEV) return;
   try {
     const profile = await liff.getProfile();
     avatarUrl.value = profile.pictureUrl ?? '';
+    preloadCardAssets([avatarUrl.value]);
     // 自動帶入 LINE 名稱（欄位上限 10 字；使用者已輸入就不覆蓋）
     if (!nickname.value) {
       let name = '';

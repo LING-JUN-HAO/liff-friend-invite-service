@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import CardDisplay from './CardDisplay.vue';
+import { onMounted } from 'vue';
+import CardDisplay, { cardCaptureKey } from './CardDisplay.vue';
+import { captureCardCached } from '../../utils/cardImage';
 
-defineProps<{
+const props = defineProps<{
   avatarUrl: string;
   nickname: string;
   cardSubLabel: string;
@@ -11,6 +13,12 @@ defineEmits<{
   confirm: [];
   back: [];
 }>();
+
+// 使用者看預覽時就在背景先產生圖片，按下送出後完成頁可以直接顯示
+onMounted(() => {
+  const el = document.getElementById('card-capture');
+  if (el) captureCardCached(cardCaptureKey(props), el).catch(() => undefined);
+});
 </script>
 
 <template>

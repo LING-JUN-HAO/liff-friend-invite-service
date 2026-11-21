@@ -74,6 +74,7 @@ const onShare = async () => {
 
 <style scoped>
 .stage {
+  position: relative;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -86,7 +87,8 @@ const onShare = async () => {
   left: -9999px;
   top: 0;
   pointer-events: none;
-  width: calc(100vw - 40px);
+  /* 跟預覽頁卡片同寬（.stage 內容寬），預覽頁背景產生的截圖才能直接沿用 */
+  width: calc(100% - 40px);
 }
 .card-preview {
   width: 100%;

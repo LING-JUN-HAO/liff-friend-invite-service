@@ -1,5 +1,12 @@
+<script lang="ts">
+export const IMG_URL = 'https://res.cloudinary.com/dj4rwmdiu/image/upload/v1795237354/%E6%8A%95%E7%A5%A8%E6%8F%90%E9%86%92_%E5%9C%96%E5%8D%A1_ri7yqp.png';
+
+/** 截圖快取的 key：包含所有會影響卡片畫面的資料 */
+export const cardCaptureKey = (card: { person: string; inviteText: string }) =>
+  JSON.stringify(['votereminder', card.person, card.inviteText]);
+</script>
+
 <script setup lang="ts">
-const IMG_URL = 'https://res.cloudinary.com/dj4rwmdiu/image/upload/v1795237354/%E6%8A%95%E7%A5%A8%E6%8F%90%E9%86%92_%E5%9C%96%E5%8D%A1_ri7yqp.png';
 
 defineProps<{
   person: string;
