@@ -10,19 +10,18 @@ const props = defineProps<{
 }>();
 
 const LIFF_URL = `https://liff.line.me/${import.meta.env.VITE_LIFF_ID}#votereminder`;
+const INVITE_CARD_IMG_URL = 'https://res.cloudinary.com/dj4rwmdiu/image/upload/v1795237354/%E6%8A%95%E7%A5%A8%E6%8F%90%E9%86%92_%E5%9C%96%E5%8D%A1_ri7yqp.png';
 const COVER_IMG_URL = 'https://res.cloudinary.com/dj4rwmdiu/image/upload/v1795237356/%E6%8A%95%E7%A5%A8%E6%8F%90%E9%86%92_%E5%B0%81%E9%9D%A2_anw4kg.png';
 const CANDIDATE_URL = import.meta.env.VITE_CANDIDATE_URL || '';
 
 const cardImageUrl = ref('');
-const cardFile = ref<File | null>(null);
 
 onMounted(async () => {
   const el = document.getElementById('vote-card-capture');
   if (!el) return;
   try {
-    const { dataUrl, file } = await captureCard(el);
+    const { dataUrl } = await captureCard(el);
     cardImageUrl.value = dataUrl;
-    cardFile.value = file;
   } catch (e) { console.error('卡片截圖失敗', e); }
 });
 
@@ -35,20 +34,65 @@ const showToast = (msg: string) => {
   toastTimer = setTimeout(() => { toastMessage.value = ''; }, 2500);
 };
 
-/** 傳給邀請對象：用系統分享直接傳合成圖片 */
+/** 傳給邀請對象：Flex 文字疊在圖片上（position: absolute） */
 const shareToInvitee = async () => {
-  const file = cardFile.value;
-  if (!file || !navigator.canShare?.({ files: [file] })) {
-    showToast('此裝置不支援直接分享圖片');
-    return;
-  }
   try {
-    await navigator.share({
-      text: `我做了邀請卡，約${props.person}投票日一起出門！`,
-      files: [file],
-    });
-  } catch (e: any) {
-    if (e?.name !== 'AbortError') showToast(`分享失敗：${String(e)}`);
+    const messages = [
+      { type: 'text', text: `我做了邀請卡，約${props.person}投票日一起出門！` },
+      {
+        type: 'flex',
+        altText: `給${props.person}的投票邀請`,
+        contents: {
+          type: 'bubble',
+          size: 'giga',
+          body: {
+            type: 'box',
+            layout: 'vertical',
+            paddingAll: 'none',
+            contents: [
+              {
+                type: 'image',
+                url: INVITE_CARD_IMG_URL,
+                size: 'full',
+                aspectMode: 'cover',
+                aspectRatio: '3:4',
+              },
+              {
+                type: 'box',
+                layout: 'vertical',
+                position: 'absolute',
+                offsetTop: '8%',
+                offsetStart: '0px',
+                offsetEnd: '0px',
+                contents: [
+                  {
+                    type: 'text',
+                    text: `給${props.person}的邀請`,
+                    weight: 'bold',
+                    size: '40px',
+                    color: '#2d4a1e',
+                    align: 'center',
+                  },
+                  {
+                    type: 'text',
+                    text: props.inviteText,
+                    wrap: true,
+                    size: '16px',
+                    color: '#2d4a1e',
+                    align: 'center',
+                    margin: 'md',
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      },
+    ];
+    const result = await liff.shareTargetPicker(messages as any);
+    if (result?.status === 'success') showToast('已成功送出邀請！');
+  } catch (e) {
+    showToast(`分享失敗：${String(e)}`);
   }
 };
 
