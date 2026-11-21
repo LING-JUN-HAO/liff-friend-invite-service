@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import liff from '@line/liff';
 import { getCardCapture } from '../../utils/cardImage';
 import { cardCaptureKey, renderVoteCard } from './drawCard';
-import { isPerfDebug, perfLines, perfMark, perfResources } from '../../utils/perfLog';
 import { shareVoteInvitee, shareVoteCreate } from '../../utils/share';
 
 const props = defineProps<{
@@ -19,28 +18,13 @@ const cardImageUrl = ref('');
 const cardBox = ref<HTMLElement | null>(null);
 
 onMounted(async () => {
-  perfMark('完成頁顯示');
   const width = cardBox.value?.clientWidth;
   if (!width) return;
   try {
     const { dataUrl } = await getCardCapture(cardCaptureKey(props), width, renderVoteCard({ ...props }));
-    perfMark('取得圖片，交給 <img> 顯示');
     cardImageUrl.value = dataUrl;
-  } catch (e) {
-    perfMark(`產圖失敗：${String(e)}`);
-    console.error('卡片截圖失敗', e);
-  }
+  } catch (e) { console.error('卡片產圖失敗', e); }
 });
-
-// 除錯面板（網址帶 debug 才顯示）：隨紀錄即時更新，卡住或失敗時也看得到停在哪一步
-const debugText = computed(() => isPerfDebug() ? [
-  `DPR ${window.devicePixelRatio}  視窗 ${window.innerWidth}x${window.innerHeight}`,
-  ...perfLines.value,
-  '— 網路 —',
-  ...perfResources(),
-  navigator.userAgent,
-].join('\n') : '');
-const onCardImageLoad = () => perfMark('圖片顯示完成');
 
 const toastMessage = ref('');
 let toastTimer: ReturnType<typeof setTimeout> | null = null;
@@ -79,7 +63,7 @@ const openCandidateUrl = () => {
   <div class="stage">
     <!-- 長按可儲存的合成圖片 -->
     <div ref="cardBox">
-      <img v-if="cardImageUrl" :src="cardImageUrl" class="card-preview" alt="投票邀請卡" @load="onCardImageLoad" />
+      <img v-if="cardImageUrl" :src="cardImageUrl" class="card-preview" alt="投票邀請卡" />
       <div v-else class="card-placeholder" />
     </div>
 
@@ -90,8 +74,6 @@ const openCandidateUrl = () => {
       <button class="btn btn--teal" @click="shareCreateInvite">邀請其他好友製作</button>
       <button v-if="CANDIDATE_URL" class="btn btn--outline" @click="openCandidateUrl">認識候選人</button>
     </div>
-
-    <pre v-if="debugText" class="debug-panel">{{ debugText }}</pre>
 
     <Transition name="toast">
       <div v-if="toastMessage" class="toast">{{ toastMessage }}</div>
@@ -146,17 +128,6 @@ const openCandidateUrl = () => {
 .btn--teal { background: #01655B; color: #fff; }
 .btn--outline { background: #fff; color: #444; border: 1.5px solid #d5d9de; font-weight: 400; }
 
-.debug-panel {
-  margin: 12px 0 0;
-  padding: 8px;
-  background: #111;
-  color: #9f9;
-  font-size: 11px;
-  line-height: 1.4;
-  white-space: pre-wrap;
-  word-break: break-all;
-  border-radius: 8px;
-}
 .toast {
   position: fixed;
   bottom: 32px;

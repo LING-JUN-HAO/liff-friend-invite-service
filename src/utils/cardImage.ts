@@ -1,6 +1,5 @@
 // 卡片圖片：產圖結果快取、分享圖片到其他社群 的共用邏輯
 import { canvasScale } from './cardCanvas';
-import { perfMark } from './perfLog';
 
 export const INVITE_TEXT = `我剛做了我的「政波卡」\n\n邀請你也一起來製作政波卡，讓希望擴散成波！\n\n一起成為改變南投的力量！`;
 export const LIFF_URL = `https://liff.line.me/${import.meta.env.VITE_LIFF_ID}#changevibe`;
@@ -31,7 +30,6 @@ export const canvasToCapture = async (canvas: HTMLCanvasElement, baseName: strin
   const blob = dataUrlToBlob(dataUrl);
   // 瀏覽器不支援 JPEG 時 toDataURL 會退回 PNG，副檔名跟著實際格式走
   const ext = blob.type === 'image/png' ? 'png' : 'jpg';
-  perfMark(`${ext.toUpperCase()} 編碼完成 ${Math.round(blob.size / 1024)}KB`);
   return { dataUrl, file: new File([blob], `${baseName}.${ext}`, { type: blob.type }), partial };
 };
 
@@ -48,11 +46,7 @@ export const renderCardCached = (
   key: string, width: number, render: (width: number) => Promise<CardCapture>,
 ): Promise<CardCapture> => {
   const fullKey = JSON.stringify([key, width, window.innerWidth, window.innerHeight, canvasScale()]);
-  if (captureCache?.key === fullKey) {
-    perfMark('使用預覽頁產生的結果');
-    return captureCache.task;
-  }
-  perfMark(`開始產圖（寬 ${width}、倍率 ${canvasScale()}）`);
+  if (captureCache?.key === fullKey) return captureCache.task;
   const task = render(width);
   const entry = { key: fullKey, task };
   captureCache = entry;

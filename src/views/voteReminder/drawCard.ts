@@ -4,7 +4,6 @@ import {
   type TextStyle,
 } from '../../utils/cardCanvas';
 import { canvasToCapture } from '../../utils/cardImage';
-import { perfMark } from '../../utils/perfLog';
 
 // f_auto,q_auto：由 Cloudinary 依瀏覽器給 webp／avif 並壓縮（投票卡底圖 1.1MB → 約 65KB），手機下載快很多
 export const IMG_URL = 'https://res.cloudinary.com/dj4rwmdiu/image/upload/f_auto,q_auto/v1795237354/%E6%8A%95%E7%A5%A8%E6%8F%90%E9%86%92_%E5%9C%96%E5%8D%A1_ri7yqp.png';
@@ -33,11 +32,9 @@ export const drawVoteCard = async (card: VoteCardData, width: number) => {
     whiteSpace: 'pre-wrap',
   };
 
-  perfMark('開始畫投票卡');
   const [img] = await Promise.all([
-    loadImage(IMG_URL).then(r => { perfMark(r ? '底圖就緒' : '底圖載入失敗'); return r; }),
-    waitFonts([{ font: titleStyle.font, text: title }, { font: textStyle.font, text: card.inviteText }])
-      .then(status => perfMark(status === 'loaded' ? '字型載入完成' : `字型等待結束（${status}）`)),
+    loadImage(IMG_URL),
+    waitFonts([{ font: titleStyle.font, text: title }, { font: textStyle.font, text: card.inviteText }]),
   ]);
   if (!img) throw new Error('卡片底圖載入失敗');
 
@@ -61,7 +58,6 @@ export const drawVoteCard = async (card: VoteCardData, width: number) => {
   drawLines(ctx, titleStyle, titleLines, left, right, top);
   drawLines(ctx, textStyle, textLines, left, right, top + titleLines.length * titleStyle.lineHeight + gap);
 
-  perfMark(`繪製完成 ${canvas.width}x${canvas.height}`);
   return canvas;
 };
 
