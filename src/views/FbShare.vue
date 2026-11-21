@@ -2,8 +2,8 @@
 // 外部瀏覽器的政波卡分享頁：LINE 內建瀏覽器不支援分享圖檔，
 // 從 LINE 跳到這頁後，用網址帶來的資料重新產生政波卡，再交給系統分享選單（可選 FB、IG 等社群）
 import { onMounted, ref } from 'vue';
-import CardDisplay from './changeVibe/CardDisplay.vue';
-import { canShareImage, captureCard, shareImage } from '../utils/cardImage';
+import { canShareImage, renderCardCached, shareImage } from '../utils/cardImage';
+import { cardCaptureKey, renderChangeVibeCard } from './changeVibe/drawCard';
 
 const query = new URLSearchParams(window.location.hash.split('?')[1] ?? '');
 const avatarUrl = query.get('a') ?? '';
@@ -13,13 +13,15 @@ const cardSubLabel = query.get('s') ?? '';
 const cardImageUrl = ref('');
 const cardFile = ref<File | null>(null);
 const supported = ref(true);
+const cardBox = ref<HTMLElement | null>(null);
 
 onMounted(async () => {
   document.title = '分享政波卡';
-  const el = document.getElementById('card-capture');
-  if (!el) return;
+  const width = cardBox.value?.clientWidth;
+  if (!width) return;
   try {
-    const { dataUrl, file } = await captureCard(el);
+    const card = { avatarUrl, nickname, cardSubLabel };
+    const { dataUrl, file } = await renderCardCached(cardCaptureKey(card), width, renderChangeVibeCard(card));
     cardImageUrl.value = dataUrl;
     cardFile.value = file;
     supported.value = canShareImage(file);
@@ -48,12 +50,10 @@ const onShare = async () => {
 
 <template>
   <div class="stage">
-    <div class="card-offscreen">
-      <CardDisplay :avatar-url="avatarUrl" :nickname="nickname" :card-sub-label="cardSubLabel" />
+    <div ref="cardBox">
+      <img v-if="cardImageUrl" :src="cardImageUrl" class="card-preview" alt="政波卡" />
+      <div v-else class="card-placeholder" />
     </div>
-
-    <img v-if="cardImageUrl" :src="cardImageUrl" class="card-preview" alt="政波卡" />
-    <div v-else class="card-placeholder" />
 
     <p class="hint-text">
       <template v-if="supported">按下按鈕選擇<strong class="hint-text__em">要分享的社群</strong><br/>文案會自動複製，發文時貼上即可</template>
@@ -74,21 +74,12 @@ const onShare = async () => {
 
 <style scoped>
 .stage {
-  position: relative;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   padding: 20px 20px 32px;
   background: #fff;
   box-sizing: border-box;
-}
-.card-offscreen {
-  position: absolute;
-  left: -9999px;
-  top: 0;
-  pointer-events: none;
-  /* 跟預覽頁卡片同寬（.stage 內容寬），預覽頁背景產生的截圖才能直接沿用 */
-  width: calc(100% - 40px);
 }
 .card-preview {
   width: 100%;

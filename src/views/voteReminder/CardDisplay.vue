@@ -1,12 +1,6 @@
-<script lang="ts">
-export const IMG_URL = 'https://res.cloudinary.com/dj4rwmdiu/image/upload/v1795237354/%E6%8A%95%E7%A5%A8%E6%8F%90%E9%86%92_%E5%9C%96%E5%8D%A1_ri7yqp.png';
-
-/** 截圖快取的 key：包含所有會影響卡片畫面的資料 */
-export const cardCaptureKey = (card: { person: string; inviteText: string }) =>
-  JSON.stringify(['votereminder', card.person, card.inviteText]);
-</script>
-
 <script setup lang="ts">
+// 版面改動時，drawCard.ts 的 Canvas 繪製也要一起改，產出的圖片才會跟畫面一致
+import { IMG_URL } from './drawCard';
 
 defineProps<{
   person: string;

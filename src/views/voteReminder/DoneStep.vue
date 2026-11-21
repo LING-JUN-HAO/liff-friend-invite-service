@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import liff from '@line/liff';
-import CardDisplay, { cardCaptureKey } from './CardDisplay.vue';
 import { getCardCapture } from '../../utils/cardImage';
+import { cardCaptureKey, renderVoteCard } from './drawCard';
 import { shareVoteInvitee, shareVoteCreate } from '../../utils/share';
 
 const props = defineProps<{
@@ -14,11 +14,14 @@ const CANDIDATE_URL = import.meta.env.VITE_CANDIDATE_URL || '';
 
 const cardImageUrl = ref('');
 
+// 卡片圖片的容器：用它的寬度（等於預覽頁卡片寬）畫圖，預覽頁背景產生的結果才能直接沿用
+const cardBox = ref<HTMLElement | null>(null);
+
 onMounted(async () => {
-  const el = document.getElementById('vote-card-capture');
-  if (!el) return;
+  const width = cardBox.value?.clientWidth;
+  if (!width) return;
   try {
-    const { dataUrl } = await getCardCapture(cardCaptureKey(props), el);
+    const { dataUrl } = await getCardCapture(cardCaptureKey(props), width, renderVoteCard({ ...props }));
     cardImageUrl.value = dataUrl;
   } catch (e) { console.error('卡片截圖失敗', e); }
 });
@@ -58,14 +61,11 @@ const openCandidateUrl = () => {
 
 <template>
   <div class="stage">
-    <!-- 隱藏版供 html2canvas 捕捉 -->
-    <div class="card-offscreen">
-      <CardDisplay :person="person" :invite-text="inviteText" />
-    </div>
-
     <!-- 長按可儲存的合成圖片 -->
-    <img v-if="cardImageUrl" :src="cardImageUrl" class="card-preview" alt="投票邀請卡" />
-    <div v-else class="card-placeholder" />
+    <div ref="cardBox">
+      <img v-if="cardImageUrl" :src="cardImageUrl" class="card-preview" alt="投票邀請卡" />
+      <div v-else class="card-placeholder" />
+    </div>
 
     <p class="success-text">長按圖片可以直接儲存</p>
 
@@ -83,20 +83,11 @@ const openCandidateUrl = () => {
 
 <style scoped>
 .stage {
-  position: relative;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   padding: 20px 20px 32px;
   background: #fff;
-}
-.card-offscreen {
-  position: absolute;
-  left: -9999px;
-  top: 0;
-  pointer-events: none;
-  /* 跟預覽頁卡片同寬（.stage 內容寬），預覽頁背景產生的截圖才能直接沿用 */
-  width: calc(100% - 40px);
 }
 .card-preview {
   width: 100%;

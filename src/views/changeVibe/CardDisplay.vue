@@ -1,12 +1,6 @@
-<script lang="ts">
-export const BG_URL = 'https://res.cloudinary.com/dj4rwmdiu/image/upload/v1794013736/%E6%94%BF%E6%B3%A2%E5%8D%A1_sr5fzy.png';
-
-/** 截圖快取的 key：包含所有會影響卡片畫面的資料 */
-export const cardCaptureKey = (card: { avatarUrl: string; nickname: string; cardSubLabel: string }) =>
-  JSON.stringify(['changevibe', card.avatarUrl, card.nickname, card.cardSubLabel]);
-</script>
-
 <script setup lang="ts">
+// 版面改動時，drawCard.ts 的 Canvas 繪製也要一起改，產出的圖片才會跟畫面一致
+import { BG_URL } from './drawCard';
 
 defineProps<{
   avatarUrl: string;

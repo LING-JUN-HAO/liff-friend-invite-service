@@ -4,8 +4,8 @@ import Step1Who from './Step1Who.vue';
 import Step2Activity from './Step2Activity.vue';
 import PreviewStep from './PreviewStep.vue';
 import DoneStep from './DoneStep.vue';
-import { IMG_URL } from './CardDisplay.vue';
-import { preloadCardAssets } from '../../utils/cardImage';
+import { IMG_URL } from './drawCard';
+import { preloadCardAssets } from '../../utils/cardCanvas';
 
 type Step = 'step1' | 'step2' | 'preview' | 'done';
 
@@ -16,7 +16,7 @@ type CardData = {
 
 const step = ref<Step>('step1');
 
-// 一進來就先下載卡片底圖與截圖套件，最後產生圖片不用再等網路
+// 一進來就先下載卡片底圖，最後產生圖片不用再等網路
 onMounted(() => preloadCardAssets([IMG_URL]));
 const cardData = ref<CardData>({ person: '', inviteText: '' });
 

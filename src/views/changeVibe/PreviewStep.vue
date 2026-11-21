@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { onMounted } from 'vue';
-import CardDisplay, { cardCaptureKey } from './CardDisplay.vue';
-import { captureCardCached } from '../../utils/cardImage';
+import CardDisplay from './CardDisplay.vue';
+import { cardCaptureKey, renderChangeVibeCard } from './drawCard';
+import { renderCardCached } from '../../utils/cardImage';
 
 const props = defineProps<{
   avatarUrl: string;
@@ -17,7 +18,7 @@ defineEmits<{
 // 使用者看預覽時就在背景先產生圖片，按下送出後完成頁可以直接顯示
 onMounted(() => {
   const el = document.getElementById('card-capture');
-  if (el) captureCardCached(cardCaptureKey(props), el).catch(() => undefined);
+  if (el) renderCardCached(cardCaptureKey(props), el.offsetWidth, renderChangeVibeCard({ ...props })).catch(() => undefined);
 });
 </script>
 

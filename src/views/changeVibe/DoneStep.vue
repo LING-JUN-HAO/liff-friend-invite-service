@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import liff from '@line/liff';
-import CardDisplay, { cardCaptureKey } from './CardDisplay.vue';
 import { buildFbShareUrl, canShareImage, getCardCapture, shareImage } from '../../utils/cardImage';
+import { cardCaptureKey, renderChangeVibeCard } from './drawCard';
 import { shareChangeVibeInvite } from '../../utils/share';
 
 const props = defineProps<{
@@ -15,11 +15,14 @@ const cardImageUrl = ref('');
 // 預先轉好的圖檔：按下按鈕時直接呼叫系統分享，避免 await 轉檔讓 iOS 判定不是使用者觸發
 const cardFile = ref<File | null>(null);
 
+// 卡片圖片的容器：用它的寬度（等於預覽頁卡片寬）畫圖，預覽頁背景產生的結果才能直接沿用
+const cardBox = ref<HTMLElement | null>(null);
+
 onMounted(async () => {
-  const el = document.getElementById('card-capture');
-  if (!el) return;
+  const width = cardBox.value?.clientWidth;
+  if (!width) return;
   try {
-    const { dataUrl, file } = await getCardCapture(cardCaptureKey(props), el);
+    const { dataUrl, file } = await getCardCapture(cardCaptureKey(props), width, renderChangeVibeCard({ ...props }));
     cardImageUrl.value = dataUrl;
     cardFile.value = file;
   } catch (e) { console.error('卡片預覽產生失敗', e); }
@@ -64,18 +67,11 @@ const inviteFriends = async () => {
 
 <template>
   <div class="stage">
-    <!-- 隱藏版供 html2canvas 捕捉 -->
-    <div class="card-offscreen">
-      <CardDisplay
-        :avatar-url="avatarUrl"
-        :nickname="nickname"
-        :card-sub-label="cardSubLabel"
-      />
-    </div>
-
     <!-- 長按可儲存的圖片預覽 -->
-    <img v-if="cardImageUrl" :src="cardImageUrl" class="card-preview" alt="政波卡" />
-    <div v-else class="card-placeholder" />
+    <div ref="cardBox">
+      <img v-if="cardImageUrl" :src="cardImageUrl" class="card-preview" alt="政波卡" />
+      <div v-else class="card-placeholder" />
+    </div>
 
     <p class="hint-text">傳出去，讓希望擴散成波🌊<br/><strong class="hint-text__em">長按圖片</strong>可以直接儲存政波卡</p>
 
@@ -92,20 +88,11 @@ const inviteFriends = async () => {
 
 <style scoped>
 .stage {
-  position: relative;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   padding: 20px 20px 32px;
   background: #fff;
-}
-.card-offscreen {
-  position: absolute;
-  left: -9999px;
-  top: 0;
-  pointer-events: none;
-  /* 跟預覽頁卡片同寬（.stage 內容寬），預覽頁背景產生的截圖才能直接沿用 */
-  width: calc(100% - 40px);
 }
 .card-preview {
   width: 100%;

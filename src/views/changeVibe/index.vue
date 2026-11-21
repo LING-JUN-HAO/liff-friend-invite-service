@@ -5,8 +5,8 @@ import PrivacyOverlay from './PrivacyOverlay.vue';
 import FormStep from './FormStep.vue';
 import PreviewStep from './PreviewStep.vue';
 import DoneStep from './DoneStep.vue';
-import { BG_URL } from './CardDisplay.vue';
-import { preloadCardAssets } from '../../utils/cardImage';
+import { BG_URL } from './drawCard';
+import { preloadCardAssets } from '../../utils/cardCanvas';
 
 type Step = 'form' | 'preview' | 'done';
 const step = ref<Step>('form');
@@ -31,7 +31,7 @@ watch(step, (s) => {
 }, { immediate: true });
 
 onMounted(async () => {
-  // 填表時就先下載卡片底圖與截圖套件，最後產生圖片不用再等網路
+  // 填表時就先下載卡片底圖，最後產生圖片不用再等網路
   preloadCardAssets([BG_URL]);
   if (import.meta.env.DEV) return;
   try {
