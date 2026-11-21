@@ -3,13 +3,14 @@ import { onMounted, ref, watch } from "vue";
 import liff from "@line/liff";
 import Game from './views/Game.vue';
 import ChangeVibe from './views/changeVibe/index.vue';
+import VoteReminder from './views/voteReminder/index.vue';
 import NotInLine from './views/NotInLine.vue';
 import FbShare from './views/FbShare.vue';
 import { share } from './utils/share';
 
 const LIFF_ID = import.meta.env.VITE_LIFF_ID as string;
 
-type View = 'game' | 'changevibe' | 'fbshare' | 'not-in-line' | 'none';
+type View = 'game' | 'changevibe' | 'votereminder' | 'fbshare' | 'not-in-line' | 'none';
 const view = ref<View>('none');
 const debugInfo = ref('');
 
@@ -30,7 +31,7 @@ onMounted(async () => {
   }
   if (import.meta.env.DEV) {
     const hash = window.location.hash;
-    view.value = hash === '#moongame' ? 'game' : 'changevibe';
+    view.value = hash === '#moongame' ? 'game' : hash === '#changevibe' ? 'changevibe' : 'votereminder';
     return;
   }
   try {
@@ -48,6 +49,8 @@ onMounted(async () => {
       view.value = 'game';
     } else if (hash === '#changevibe') {
       view.value = 'changevibe';
+    } else if (hash === '#votereminder') {
+      view.value = 'votereminder';
     } else if (hash === '#share/moonquiz') {
       await share('moonquiz');
       liff.closeWindow();
@@ -67,6 +70,7 @@ onMounted(async () => {
 <template>
   <Game v-if="view === 'game'" />
   <ChangeVibe v-else-if="view === 'changevibe'" />
+  <VoteReminder v-else-if="view === 'votereminder'" />
   <FbShare v-else-if="view === 'fbshare'" />
   <NotInLine v-else-if="view === 'not-in-line'" />
   <pre v-else style="padding:16px;font-size:12px;word-break:break-all;white-space:pre-wrap;">{{ debugInfo }}</pre>
