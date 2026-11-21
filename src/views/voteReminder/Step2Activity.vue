@@ -10,9 +10,12 @@ const props = defineProps<{
   person: string;
 }>();
 
-const PRESET_LABELS = ['一起吃早餐', '一起散步過去', '投完去喝飲料'];
-
-const buildInviteText = (label: string) => `投票日我們${label}，\n再一起去投票！`;
+// 每個選項各自一句完整文案（不共用句型，避免「投完去喝飲料，再一起去投票」這種順序矛盾）；\n 是卡片上的換行
+const PRESETS = [
+  { label: '一起吃早餐', text: '投票日我們一起吃早餐，\n再一起去投票！' },
+  { label: '一起散步過去', text: '投票日我們一起散步，\n走去投票！' },
+  { label: '投完去喝飲料', text: '投票日我們一起去投票，\n投完再去喝飲料！' },
+];
 
 const selectedPreset = ref<number | null>(null);
 const isCustom = ref(false);
@@ -31,13 +34,14 @@ const selectCustom = () => {
 
 const previewText = computed(() => {
   if (!customText.value.trim()) return '';
-  if (useTemplate.value) return `投票日${customText.value.trim()}，再一起去投票！`;
+  // 使用預設句型：跟預設選項同樣以「投票日我們」開頭、逗號後換行；使用者自己打了「我們」就不重複
+  if (useTemplate.value) return `投票日我們${customText.value.trim().replace(/^我們/, '')}，\n再一起去投票！`;
   return customText.value.trim();
 });
 
 const resolvedText = computed(() => {
   if (isCustom.value) return previewText.value;
-  if (selectedPreset.value !== null) return buildInviteText(PRESET_LABELS[selectedPreset.value]);
+  if (selectedPreset.value !== null) return PRESETS[selectedPreset.value].text;
   return '';
 });
 
@@ -62,14 +66,14 @@ const submit = () => {
       <div class="option-list">
         <!-- 預設選項 -->
         <div
-          v-for="(label, idx) in PRESET_LABELS"
+          v-for="(preset, idx) in PRESETS"
           :key="idx"
           class="option-card"
           :class="{ 'option-card--active': selectedPreset === idx && !isCustom }"
           @click="selectPreset(idx)"
         >
           <div class="option-row">
-            <span class="option-label" :class="{ 'option-label--active': selectedPreset === idx && !isCustom }">{{ label }}</span>
+            <span class="option-label" :class="{ 'option-label--active': selectedPreset === idx && !isCustom }">{{ preset.label }}</span>
             <span class="option-radio" :class="{ 'option-radio--checked': selectedPreset === idx && !isCustom }">
               <span v-if="selectedPreset === idx && !isCustom" class="option-radio__dot" />
             </span>
@@ -269,7 +273,7 @@ const submit = () => {
   gap: 4px;
 }
 .preview-label { font-size: 13px; color: #888; }
-.preview-text { font-size: 15px; color: #1a1a1a; font-weight: 400; line-height: 1.6; }
+.preview-text { font-size: 15px; color: #1a1a1a; font-weight: 400; line-height: 1.6; white-space: pre-line; }
 
 /* CTA */
 .cta-bar {
