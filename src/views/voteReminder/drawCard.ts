@@ -67,4 +67,4 @@ export const drawVoteCard = async (card: VoteCardData, width: number) => {
 
 /** 產生投票邀請卡圖片（預覽 dataURL 與分享用 File） */
 export const renderVoteCard = (card: VoteCardData) => async (width: number) =>
-  canvasToCapture(await drawVoteCard(card, width), '投票邀請卡.jpg');
+  canvasToCapture(await drawVoteCard(card, width), '投票邀請卡');

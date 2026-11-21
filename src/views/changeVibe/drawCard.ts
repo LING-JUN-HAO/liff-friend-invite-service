@@ -88,5 +88,5 @@ export const drawChangeVibeCard = async (card: ChangeVibeCardData, width: number
 /** 產生政波卡圖片（預覽 dataURL 與分享用 File） */
 export const renderChangeVibeCard = (card: ChangeVibeCardData) => async (width: number) => {
   const { canvas, partial } = await drawChangeVibeCard(card, width);
-  return canvasToCapture(canvas, '政波卡.jpg', partial);
+  return canvasToCapture(canvas, '政波卡', partial);
 };

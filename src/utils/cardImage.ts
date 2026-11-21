@@ -8,26 +8,31 @@ export const LIFF_URL = `https://liff.line.me/${import.meta.env.VITE_LIFF_ID}#ch
 // partial：有素材沒載到（例如頭貼），圖仍可先顯示，但不留在快取，之後會重畫
 export type CardCapture = { dataUrl: string; file: File | null; partial?: boolean };
 
-const blobToDataUrl = (blob: Blob) =>
-  new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = () => reject(reader.error);
-    reader.readAsDataURL(blob);
-  });
-
-// 用 JPEG 輸出：入門 Android 手機實測 PNG 編碼要 4～5 秒，JPEG 快很多、檔案也小很多
+// 用 JPEG 輸出：比 PNG 快很多、檔案也小很多
 const IMAGE_TYPE = 'image/jpeg';
 const IMAGE_QUALITY = 0.92;
 
-/** 把畫好的 canvas 轉成預覽用 dataURL 與分享用 File；只編碼一次，dataURL 由同一份 Blob 讀出 */
-export const canvasToCapture = async (canvas: HTMLCanvasElement, fileName: string, partial = false): Promise<CardCapture> => {
-  const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, IMAGE_TYPE, IMAGE_QUALITY));
-  perfMark(`JPEG 編碼完成 ${blob ? Math.round(blob.size / 1024) : '?'}KB`);
-  if (!blob) return { dataUrl: canvas.toDataURL(IMAGE_TYPE, IMAGE_QUALITY), file: null, partial };
-  const dataUrl = await blobToDataUrl(blob);
-  perfMark('dataURL 完成');
-  return { dataUrl, file: new File([blob], fileName, { type: IMAGE_TYPE }), partial };
+const dataUrlToBlob = (dataUrl: string) => {
+  const [header, base64] = dataUrl.split(',');
+  const type = /data:([^;]+)/.exec(header)?.[1] ?? IMAGE_TYPE;
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return new Blob([bytes], { type });
+};
+
+/**
+ * 把畫好的 canvas 轉成預覽用 dataURL 與分享用 File。
+ * 用同步的 toDataURL 而不是 toBlob：Chrome 的 toBlob 會等瀏覽器閒置才編碼，
+ * 入門 Android 的 LINE WebView 實測要等 4 秒以上；toDataURL 當下就編碼完成。
+ */
+export const canvasToCapture = async (canvas: HTMLCanvasElement, baseName: string, partial = false): Promise<CardCapture> => {
+  const dataUrl = canvas.toDataURL(IMAGE_TYPE, IMAGE_QUALITY);
+  const blob = dataUrlToBlob(dataUrl);
+  // 瀏覽器不支援 JPEG 時 toDataURL 會退回 PNG，副檔名跟著實際格式走
+  const ext = blob.type === 'image/png' ? 'png' : 'jpg';
+  perfMark(`${ext.toUpperCase()} 編碼完成 ${Math.round(blob.size / 1024)}KB`);
+  return { dataUrl, file: new File([blob], `${baseName}.${ext}`, { type: blob.type }), partial };
 };
 
 // 最近一張卡的產圖結果：預覽頁先在背景產生、完成頁直接取用。
