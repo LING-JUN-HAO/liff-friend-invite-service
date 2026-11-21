@@ -5,7 +5,8 @@ import {
 } from '../../utils/cardCanvas';
 import { canvasToCapture } from '../../utils/cardImage';
 
-export const BG_URL = 'https://res.cloudinary.com/dj4rwmdiu/image/upload/v1794013736/%E6%94%BF%E6%B3%A2%E5%8D%A1_sr5fzy.png';
+// f_auto,q_auto：由 Cloudinary 依瀏覽器給 webp／avif 並壓縮（政波卡底圖 430KB → 約 115KB），手機下載快很多
+export const BG_URL = 'https://res.cloudinary.com/dj4rwmdiu/image/upload/f_auto,q_auto/v1794013736/%E6%94%BF%E6%B3%A2%E5%8D%A1_sr5fzy.png';
 
 export type ChangeVibeCardData = { avatarUrl: string; nickname: string; cardSubLabel: string };
 
