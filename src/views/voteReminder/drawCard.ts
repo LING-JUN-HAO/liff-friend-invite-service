@@ -17,7 +17,7 @@ export const cardCaptureKey = (card: VoteCardData) =>
 
 /** 依卡片寬度（CSS px）畫出投票邀請卡 */
 export const drawVoteCard = async (card: VoteCardData, width: number) => {
-  const title = `給${card.person}的邀請`;
+  const title = `我想邀請 ${card.person}`;
   const titleSize = cssPx('clamp(32px, 8vw, 60px)');
   const textSize = cssPx('clamp(16px, 5.5vw, 32px)');
   const titleStyle: TextStyle = {

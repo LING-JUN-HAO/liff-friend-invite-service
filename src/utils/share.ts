@@ -269,7 +269,7 @@ export const shareVoteInvitee = async (person: string, inviteText: string) => {
               contents: [
                 {
                   type: 'text',
-                  text: `給${person}的邀請`,
+                  text: `我想邀請 ${person}`,
                   weight: 'bold',
                   size: '32px',
                   color: '#2d4a1e',

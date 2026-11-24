@@ -77,7 +77,7 @@ const emit = defineEmits<{
               />
               <span class="input-counter">{{ customName.length }}/8</span>
             </div>
-            <p class="subform__hint">最多 8 個字，將顯示於卡片標題：給ＯＯ的邀請</p>
+            <p class="subform__hint">最多 8 個字，將顯示於卡片標題：我想邀請 ＯＯ</p>
           </div>
         </div>
       </div>

@@ -12,7 +12,7 @@ defineProps<{
   <div class="card" id="vote-card-capture">
     <img class="card__bg" :src="IMG_URL" crossorigin="anonymous" />
     <div class="card__overlay">
-      <p class="card__title">給{{ person }}的邀請</p>
+      <p class="card__title">我想邀請 {{ person }}</p>
       <p class="card__text">{{ inviteText }}</p>
     </div>
   </div>
