@@ -47,7 +47,8 @@ onMounted(async () => {
     const hash = window.location.hash;
     if (hash === '#moongame') {
       view.value = 'game';
-    } else if (hash === '#changevibe') {
+    } else if (hash === '#changevibe' || hash === '#supportcard') {
+      // #supportcard 是政波卡改名前的網址（2026-10-24 ～ 11-08），已發出的連結仍要能開
       view.value = 'changevibe';
     } else if (hash === '#votereminder') {
       view.value = 'votereminder';
